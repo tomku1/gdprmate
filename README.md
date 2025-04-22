@@ -1,94 +1,111 @@
-# 10x Astro Starter
+# GdprMate
 
-A modern, opinionated starter template for building fast, accessible, and AI-friendly web applications.
+[![Node.js Version](https://img.shields.io/badge/node-22.14.0-brightgreen)]()
+[![Status: MVP](https://img.shields.io/badge/status-MVP-yellow)]()
+
+## Table of Contents
+
+1. [Project Description](#project-description)
+2. [Tech Stack](#tech-stack)
+3. [Getting Started](#getting-started)
+4. [Available Scripts](#available-scripts)
+5. [Project Scope](#project-scope)
+6. [Project Status](#project-status)
+7. [License](#license)
+
+## Project Description
+
+GdprMate is a web-based assistant for GDPR compliance. It helps users quickly analyze legal documents—such as privacy notices and consent clauses—against key requirements (Articles 7, 13, 14). The app automatically identifies missing or incorrect elements, categorizes issues by severity (critical, major, minor), and offers suggested corrective language. Registered users can store documents, review past analyses, filter and sort results, and work on multiple devices thanks to a responsive interface.
 
 ## Tech Stack
 
-- [Astro](https://astro.build/) v5.5.5 - Modern web framework for building fast, content-focused websites
-- [React](https://react.dev/) v19.0.0 - UI library for building interactive components
-- [TypeScript](https://www.typescriptlang.org/) v5 - Type-safe JavaScript
-- [Tailwind CSS](https://tailwindcss.com/) v4.0.17 - Utility-first CSS framework
+- **Frontend**
+  - Astro 5  
+  - React 19  
+  - TypeScript 5  
+  - Tailwind 4  
+  - Shadcn/ui  
 
-## Prerequisites
+- **Backend**
+  - Supabase (PostgreSQL + Auth)  
 
-- Node.js v22.14.0 (as specified in `.nvmrc`)
-- npm (comes with Node.js)
+- **AI/LLM Integration**
+  - Openrouter.ai (connects to OpenAI, Anthropic, Google, etc.; cost limits)
+
+- **CI/CD & Hosting**
+  - GitHub Actions  
+  - DigitalOcean (Docker)
 
 ## Getting Started
 
-1. Clone the repository:
+### Prerequisites
+
+- [nvm](https://github.com/nvm-sh/nvm)  
+- Node.js v22.14.0 (see `.nvmrc`)  
+- npm
+
+### Installation
 
 ```bash
-git clone https://github.com/przeprogramowani/10x-astro-starter.git
-cd 10x-astro-starter
-```
-
-2. Install dependencies:
-
-```bash
+git clone https://github.com/<your-username>/gdprmate.git
+cd gdprmate
+nvm install
+nvm use
 npm install
 ```
 
-3. Run the development server:
+### Environment Variables
+
+Create a `.env` file in the project root:
+
+```env
+SUPABASE_URL=your_supabase_url
+SUPABASE_ANON_KEY=your_supabase_anon_key
+OPENROUTER_API_KEY=your_openrouter_api_key
+```
+
+### Running Locally
 
 ```bash
 npm run dev
 ```
 
-4. Build for production:
-
-```bash
-npm run build
-```
+Open `http://localhost:3000` in your browser.
 
 ## Available Scripts
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
-- `npm run lint:fix` - Fix ESLint issues
+| Command            | Description                              |
+| ------------------ | ---------------------------------------- |
+| `npm run dev`      | Start local dev server (`astro dev`)     |
+| `npm run build`    | Build for production (`astro build`)     |
+| `npm run preview`  | Preview production build (`astro preview`)|
+| `npm run lint`     | Run ESLint checks                        |
+| `npm run lint:fix` | Auto-fix lint issues                     |
+| `npm run format`   | Format code with Prettier                |
 
-## Project Structure
+## Project Scope
 
-```md
-.
-├── src/
-│   ├── layouts/    # Astro layouts
-│   ├── pages/      # Astro pages
-│   │   └── api/    # API endpoints
-│   ├── components/ # UI components (Astro & React)
-│   └── assets/     # Static assets
-├── public/         # Public assets
-```
+### In-Scope Features
 
-## AI Development Support
+- Automated analysis of privacy notices (Art. 13 & 14) and consent clauses (Art. 7)  
+- Support for text input (copy-paste), `.txt`, `.pdf`, and `.docx` files  
+- Severity categorization and visual highlighting  
+- Suggestion generation for corrective language  
+- User registration, login, and secure sessions  
+- Document & analysis history with filtering and sorting  
+- Responsive UI (desktop, tablet, mobile)  
+- Multi-language support (Polish & English)  
+- Basic security (input validation, auth/authorization, row-level security)
 
-This project is configured with AI development tools to enhance the development experience, providing guidelines for:
+### Out-of-Scope (MVP)
 
-- Project structure
-- Coding practices
-- Frontend development
-- Styling with Tailwind
-- Accessibility best practices
-- Astro and React guidelines
+- Legal advice or detailed interpretations  
+- External system integrations (CRMs, ERPs)  
+- Advanced analytics, dashboards, or notifications  
+- Dedicated mobile app  
+- Export features (PDF/CSV), document versioning, interactive tutorials
 
-### Cursor IDE
+## Project Status
 
-The project includes AI rules in `.cursor/rules/` directory that help Cursor IDE understand the project structure and provide better code suggestions.
+This project is currently in **MVP** development. Core features are implemented; focus is on improving analysis accuracy, UX, and stability.
 
-### GitHub Copilot
-
-AI instructions for GitHub Copilot are available in `.github/copilot-instructions.md`
-
-### Windsurf
-
-The `.windsurfrules` file contains AI configuration for Windsurf.
-
-## Contributing
-
-Please follow the AI guidelines and coding practices defined in the AI configuration files when contributing to this project.
-
-## License
-
-MIT
