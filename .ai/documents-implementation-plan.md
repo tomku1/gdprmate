@@ -1,107 +1,116 @@
-# API Endpoint Implementation Plan: POST /api/documents
+# API Endpoint Implementation Plan: POST /api/analyses
 
 ## 1. Overview of the Endpoint
-The endpoint allows authenticated users to submit a document as a file or raw text. The document is stored in S3, and metadata is saved in the `documents` table in Supabase.
+The endpoint allows authenticated users to submit text content for immediate GDPR compliance analysis. The text is stored in the `documents` table and linked to a new analysis record in the `analyses` table. The analysis is performed synchronously, and results are returned immediately.
 
 ## 2. Request Details
 - HTTP Method: POST
-- Path: `/api/documents`
+- Path: `/api/analyses`
 - Headers:
   - `Authorization: Bearer <token>`
-  - `Content-Type: multipart/form-data` **or** `application/json`
+  - `Content-Type: application/json`
 - Parameters:
   - Required:
-    - **file** (`file`) – for `multipart/form-data`
-    - **text_content** (string) – for `application/json`
-  - Optional:
-    - **original_filename** (string) – for `application/json`
+    - **text_content** (string) – The text to analyze for GDPR compliance
 
-### Content Schemas:
-- multipart/form-data (file):
-  - `file` field containing the document
-- application/json (text):
-  ```json
-  {
-    "text_content": "...",
-    "original_filename": "optional.txt"
-  }
-  ```
+### Content Schema:
+```json
+{
+  "text_content": "Text content to analyze..."
+}
+```
 
 ## 3. Used Types
-- **CreateDocumentCommand** (src/types.ts):
+- **CreateAnalysisCommand** (src/types.ts):
   ```ts
-  type CreateDocumentCommand = Pick<DocumentInsert, 'text_content'> &
-    Partial<Pick<DocumentInsert, 'original_filename'>>;
+  interface CreateAnalysisCommand {
+    text_content: string;
+  };
   ```
-- **DocumentSummaryDTO** (src/types.ts):
+- **AnalysisSummaryDTO** (src/types.ts):
   ```ts
-  interface DocumentSummaryDTO {
+  interface AnalysisSummaryDTO {
     id: string;
-    original_filename: string;
-    mime_type: string;
-    size_bytes: number;
+    text_preview: string;
+    status: AnalysisStatus;
     detected_language: string;
     created_at: string;
   }
   ```
-- **DocumentInsert** (internal Supabase type)
+- **AnalysisStatus** (enum):
+  ```ts
+  type AnalysisStatus =  "completed" | "failed";
+  ```
 
 ## 4. Response Details
 - **201 Created** – success
   ```json
   {
     "id": "uuid",
-    "original_filename": "example.txt",
-    "mime_type": "text/plain",
-    "size_bytes": 1234,
+    "text_preview": "First 100 characters of text...",
     "detected_language": "en",
-    "created_at": "2023-06-01T12:00:00Z"
+    "created_at": "2023-06-01T12:00:00Z",
+    "issues": [
+      {
+        "id": "uuid",
+        "category": "critical",
+        "description": "Missing information about data controller",
+        "suggestion": "Add the following clause: ...",
+        "created_at": "2023-06-01T12:00:00Z"
+      }
+    ],
+    "issues_pagination": {
+      "total": 15,
+      "page": 1,
+      "limit": 10,
+      "pages": 2
+    }
   }
   ```
 - Errors:
   - 400 Bad Request
   - 401 Unauthorized
   - 413 Payload Too Large
-  - 415 Unsupported Media Type
   - 500 Internal Server Error
 
 ## 5. Data Flow
 1. **Auth middleware** – fetch `user.id` from `context.locals.supabase.auth.getUser()`
 2. **API Handler** (Astro Server Endpoint):
-   - Content-type differentiation
-   - Data parsing (multer/Astro body parser)
+   - Data parsing (Astro body parser)
    - Validation and verification using Zod
-3. **DocumentService** (`src/lib/services/document.service.ts`):
-   - uploadFromFile(userId, file)
-   - uploadFromText(userId, command)
-   - Common: language detection (e.g., `franc` library), S3 key generation, upload to S3
-   - Record insertion in the `documents` table
-   - Mapping to DocumentSummaryDTO
-4. **Return response** with 201 status code and DTO
+3. **AnalysisService** (`src/lib/services/analysis.service.ts`):
+   - createAnalysis(userId, command)
+     1. Store text in documents table
+     2. Create analysis record
+     3. Detect language
+     4. Generate text preview
+     5. Call OpenRouter.ai API for GDPR analysis
+     6. Process results and create issues
+     7. Return complete analysis with issues
 
 ## 6. Security Considerations
 - **Authentication**: Supabase session check
-- **Authorization**: document assigned to `user_id` – only the owner reads their own documents
+- **Authorization**: Analysis and document assigned to `user_id` – only the owner can access their data
 - **Input validation**: Zod checks types and sizes
-- **Size limitation**: 10MB
-- **MIME filtering**: allowed types (text/plain, application/pdf, docx, etc.)
-- **Filename sanitization**: S3 name generation, no path traversal
-- **Optional antivirus scan** before upload (extension)
+- **Size limitation**: 50,000 characters (as per US-004)
+- **Text sanitization**: Remove any potentially harmful characters or sequences
+- **Rate limiting**: Prevent abuse of the analysis service
+- **API Key Security**: Secure storage and rotation of OpenRouter.ai API keys
 
 ## 7. Error Handling
-- **400** – invalid data (missing `file`/`text_content`, incorrect type)
+- **400** – invalid data (missing `text_content`, text too short)
 - **401** – missing/invalid token
-- **413** – file >10MB
-- **415** – unsupported MIME
+- **413** – text exceeds 50,000 characters
 - **500** – unhandled exceptions (logging `context.log.error(err)`)
 
 ## 8. Performance
-- **Asynchronous upload** to S3
-- **Streaming** files instead of buffering in memory
-- Request rate limiting
+- **Request timeout**: Set appropriate timeout for OpenRouter.ai API calls
+- **Text processing optimization**
+- **Database indexing** for efficient queries
 
 ## 9. Deployment Stages
-1. **Create Zod schema** for both content-types
+1. **Create Zod schema** for text content validation
 2. **Authentication middleware** in `src/middleware/index.ts`
-3. **Service**: `src/lib/services/document.service.ts` with uploadFromFile and uploadFromText methods
-4. **Handler**: new file `src/pages/api/documents.ts` (Astro Server Endpoint)
+3. **Services**:
+   - `src/lib/services/analysis.service.ts` with createAnalysis method
+4. **Handler**: new file `src/pages/api/analyses.ts` (Astro Server Endpoint)

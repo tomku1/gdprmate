@@ -13,10 +13,9 @@ This table is managed by Supabase Auth.
 ### documents
 - **id** UUID PRIMARY KEY DEFAULT uuid_generate_v4()
 - **user_id** UUID NOT NULL REFERENCES users(id)
-- **original_filename** TEXT NOT NULL
+- **original_filename** TEXT
 - **mime_type** TEXT NOT NULL
 - **size_bytes** INTEGER NOT NULL CHECK (size_bytes <= 10000000)
-- **s3_key** TEXT NOT NULL
 - **text_content** TEXT NOT NULL
 - **detected_language** CHAR(2) NOT NULL
 - **created_at** TIMESTAMPTZ NOT NULL DEFAULT now()
@@ -52,7 +51,7 @@ This table is managed by Supabase Auth.
 ## 2. Enums PostgreSQL
 
 ```sql
-CREATE TYPE analysis_status_enum AS ENUM ('pending','in_progress','completed','failed');
+CREATE TYPE analysis_status_enum AS ENUM ('completed','failed');
 CREATE TYPE issue_category_enum AS ENUM ('critical','important','minor');
 CREATE TYPE interaction_type_enum AS ENUM ('accepted','rejected');
 ```
@@ -68,7 +67,6 @@ CREATE TYPE interaction_type_enum AS ENUM ('accepted','rejected');
 
 - Indeks na `documents(user_id, created_at)` przyspiesza pobieranie dokumentów danego użytkownika w kolejności czasowej.
 - Indeks na `analyses(user_id, document_id)` przyspiesza filtrowanie analiz po właścicielu i powiązanym dokumencie.
-- Indeks na `analyses(status)` wspiera szybkie wyszukiwanie analiz według statusu.
 - Indeks na `analysis_issues(analysis_id, user_id, category)` przyspiesza wyszukiwanie problemów według analizy, właściciela i kategorii.
 - Indeks na `suggestion_interactions(issue_id, user_id, interaction_type)` przyspiesza filtrowanie interakcji według problemu, właściciela i typu akcji.
 
@@ -80,8 +78,7 @@ CREATE TYPE interaction_type_enum AS ENUM ('accepted','rejected');
 ## 6. Dodatkowe uwagi
 
 - **Retention**: rekordy starsze niż 180 dni usuwane za pomocą pg_cron.
-- **S3 lifecycle**: 30d → Standard‑IA, 90d → Glacier, 180d → usunięcie.
-- **Limit rozmiaru pliku**: CHECK w kolumnie `size_bytes` do 10 000 000 (10MB).
+- **Limit rozmiaru pliku**: CHECK w kolumnie `size_bytes` do 10 000 000 (10MB).
 - **Bezpieczeństwo**: rozważ szyfrowanie `text_content` (pgcrypto) i PITR.
 - **Audyt**: opcjonalne wdrożenie pgAudit na wrażliwych tabelach.
 

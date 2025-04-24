@@ -26,51 +26,21 @@ export type IssueCategory = Enums<"issue_category_enum">;
 export type InteractionType = Enums<"interaction_type_enum">;
 
 /**
- * Document models based on the `documents` table.
+ * Command model for creating an analysis with text content.
+ * The text will be stored in the documents table internally.
  */
-export type DocumentSummaryDTO = Pick<
-  Document,
-  "id" | "original_filename" | "mime_type" | "size_bytes" | "detected_language" | "created_at"
->;
-
-export type DocumentDetailsDTO = Pick<
-  Document,
-  "id" | "original_filename" | "mime_type" | "size_bytes" | "text_content" | "detected_language" | "created_at"
->;
-
-/**
- * Command model for creating a document from text content.
- *
- * This type defines the structure for the payload used when creating a new document:
- * - It requires the "text_content" field from DocumentInsert (mandatory)
- * - It makes "original_filename" optional through Partial<Pick>
- *
- * This allows API clients to submit document content with an optional filename.
- */
-export type CreateDocumentCommand = Pick<DocumentInsert, "text_content"> &
-  Partial<Pick<DocumentInsert, "original_filename">>;
-
-/**
- * Response shape for listing documents.
- */
-export interface DocumentListResponseDTO {
-  documents: DocumentSummaryDTO[];
-  pagination: PaginationDTO;
+export interface CreateAnalysisCommand {
+  text_content: string;
 }
 
 /**
  * Analysis models based on the `analyses` table.
  */
-export type CreateAnalysisCommand = Pick<AnalysisInsert, "document_id">;
-
 export interface AnalysisSummaryDTO {
   id: string;
-  document_id: string;
-  document_name: string;
+  text_preview: string;
   status: AnalysisStatus;
-  started_at: string;
-  completed_at: string | null;
-  duration_ms: number | null;
+  detected_language: string;
   created_at: string;
 }
 
@@ -83,25 +53,6 @@ export interface AnalysisListResponseDTO {
 }
 
 /**
- * Detailed analysis shape, including optional issues if requested.
- */
-export interface AnalysisDetailsDTO {
-  id: string;
-  document_id: string;
-  document_name: string;
-  status: AnalysisStatus;
-  model_version: string;
-  started_at: string;
-  completed_at: string | null;
-  duration_ms: number | null;
-  error_message: string | null;
-  created_at: string;
-  /** Included when `?include=issues` is specified */
-  issues?: IssueDTO[];
-  issues_pagination?: PaginationDTO;
-}
-
-/**
  * Issue models based on the `analysis_issues` table.
  */
 export interface IssueDTO {
@@ -110,6 +61,33 @@ export interface IssueDTO {
   description: string;
   suggestion: string;
   created_at: string;
+}
+
+/**
+ * Detailed analysis shape with issues.
+ */
+export interface AnalysisDetailsDTO {
+  id: string;
+  text_content: string;
+  text_preview: string;
+  status: AnalysisStatus;
+  model_version: string;
+  detected_language: string;
+  created_at: string;
+  issues: IssueDTO[];
+  issues_pagination: PaginationDTO;
+}
+
+/**
+ * Response shape for newly created analysis.
+ */
+export interface CreateAnalysisResponseDTO {
+  id: string;
+  text_preview: string;
+  detected_language: string;
+  created_at: string;
+  issues: IssueDTO[];
+  issues_pagination: PaginationDTO;
 }
 
 /**
