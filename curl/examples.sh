@@ -1,39 +1,35 @@
 #!/usr/bin/env bash
+# Example cURL commands for testing POST /api/analyses
+# Adjust host/port as needed
 
-# Example cURL commands for testing POST /api/documents
-# Adjust host/port and file paths as needed
-
-# 1) Valid file upload (multipart/form-data)
+# 1) Valid analysis request
 curl -v \
-  -X POST http://localhost:3000/api/documents \
-  -H "Content-Type: multipart/form-data" \
-  -F "file=@/absolute/path/to/example.pdf"
-
-# 2) Valid JSON text upload
-curl -v \
-  -X POST http://localhost:3000/api/documents \
+  -X POST http://localhost:3000/api/analyses \
   -H "Content-Type: application/json" \
   -d '{
-    "text_content": "This is a test document.",
-    "original_filename": "test.txt"
+    "text_content": "We collect your personal data for marketing purposes. You can contact us at example@example.com."
   }'
 
-# 3) Missing file in multipart/form-data (should return 400)
+# 2) Invalid analysis request - empty text (should return 400)
 curl -v \
-  -X POST http://localhost:3000/api/documents \
-  -H "Content-Type: multipart/form-data" \
-  -F "file="
+  -X POST http://localhost:3000/api/analyses \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text_content": ""
+  }'
 
-# 4) Invalid JSON payload (should return 400 with validation details)
+# 3) Invalid analysis request - missing text_content (should return 400)
 curl -v \
-  -X POST http://localhost:3000/api/documents \
+  -X POST http://localhost:3000/api/analyses \
   -H "Content-Type: application/json" \
   -d '{
     "wrong_field": "oops"
   }'
 
-# 5) Unsupported Content-Type (should return 415)
+# 4) Valid analysis request with longer privacy policy text
 curl -v \
-  -X POST http://localhost:3000/api/documents \
-  -H "Content-Type: text/plain" \
-  -d "just some raw text" 
+  -X POST http://localhost:3000/api/analyses \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text_content": "PRIVACY POLICY\n\nWe collect your name, email and browsing history. We share this data with our marketing partners. We store your data indefinitely. You can contact us at privacy@example.com if you have questions."
+  }' 
