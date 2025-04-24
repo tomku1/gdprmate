@@ -150,7 +150,7 @@ Obecnie zapewnienie zgodności dokumentów z wymogami Rozporządzenia o Ochronie
 - Opis: Jako zalogowany użytkownik, po wprowadzeniu tekstu (przez wklejenie lub wgranie pliku), chcę móc uruchomić proces analizy tego tekstu pod kątem zgodności z art. 7, 13 i 14 GDPR.
 - Kryteria akceptacji:
     - Po wprowadzeniu tekstu (wklejeniu lub pomyślnym wgraniu pliku i ekstrakcji tekstu) widoczny jest przycisk/opcja "Analizuj".
-    - Kliknięcie przycisku "Analizuj" inicjuje proces analizy na serwerze.
+    - Kliknięcie przycisku "Analizuj" inicjuje proces analizy - komunikacja z modelami przez usługę Openrouter.ai:
     - Użytkownik otrzymuje informację zwrotną, że analiza jest w toku (np. animacja ładowania, komunikat).
     - Analiza obejmuje sprawdzenie zgodności z art. 7 (dla zgód), art. 13 i 14 (dla klauzul informacyjnych) GDPR.
     - Po zakończeniu analizy, jej wyniki są zapisywane i powiązane z moim kontem użytkownika.
