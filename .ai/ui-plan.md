@@ -49,7 +49,6 @@ Aplikacja dzieli się na dwie główne strefy: publiczną (rejestracja, logowani
    - Przegląda podświetlenia i listę IssueCard,
    - Filtrowanie po kategoriach,
    - Kopiuje sugestię (POST /api/issues/{id}/interactions), otrzymuje toast,
-   - Może kliknąć "Edytuj i powtórz" aby przeładować tekst do tab Nowa analiza.
 5. Użytkownik przechodzi do zakładki Historia analiz, sortuje lub przewija z infinite scroll, klika wpis -> `/analyses/:id`.
 6. W każdej chwili może otworzyć menu użytkownika i wylogować się, przejść do `/auth/login`.
 
