@@ -1,0 +1,90 @@
+Art. 7 GDPR Conditions for consent
+1. Where processing is based on consent, the controller shall be able to demonstrate that the data subject has consented to processing of his or her personal data.  
+2. ^{1}If the data subject’s consent is given in the context of a written declaration which also concerns other matters, the request for consent shall be presented in a manner which is clearly distinguishable from the other matters, in an intelligible and easily accessible form, using clear and plain language. ^{2}Any part of such a declaration which constitutes an infringement of this Regulation shall not be binding.  
+3. ^{1}The data subject shall have the right to withdraw his or her consent at any time. ^{2}The withdrawal of consent shall not affect the lawfulness of processing based on consent before its withdrawal. ^{3}Prior to giving consent, the data subject shall be informed thereof. ^{4}It shall be as easy to withdraw as to give consent.  
+4. When assessing whether consent is freely given, utmost account shall be taken of whether, inter alia, the performance of a contract, including the provision of a service, is conditional on consent to the processing of personal data that is not necessary for the performance of that contract. 
+
+Recital 32 Conditions for Consent*
+^{1}Consent should be given by a clear affirmative act establishing a freely given, specific, informed and unambiguous indication of the data subject’s agreement to the processing of personal data relating to him or her, such as by a written statement, including by electronic means, or an oral statement.  
+^{2}This could include ticking a box when visiting an internet website, choosing technical settings for information society services or another statement or conduct which clearly indicates in this context the data subject’s acceptance of the proposed processing of his or her personal data. ^{3}Silence, pre-ticked boxes or inactivity should not therefore constitute consent. ^{4}Consent should cover all processing activities carried out for the same purpose or purposes.  
+^{5}When the processing has multiple purposes, consent should be given for all of them. ^{6}If the data subject’s consent is to be given following a request by electronic means, the request must be clear, concise and not unnecessarily disruptive to the use of the service for which it is provided.  
+* This title is an unofficial description.
+
+Recital 33 Consent to Certain Areas of Scientific Research*
+^{1}It is often not possible to fully identify the purpose of personal data processing for scientific research purposes at the time of data collection. ^{2}Therefore, data subjects should be allowed to give their consent to certain areas of scientific research when in keeping with recognised ethical standards for scientific research.  
+^{3}Data subjects should have the opportunity to give their consent only to certain areas of research or parts of research projects to the extent allowed by the intended purpose.  
+* This title is an unofficial description.
+
+Recital 42 Burden of Proof and Requirements for Consent*
+^{1}Where processing is based on the data subject’s consent, the controller should be able to demonstrate that the data subject has given consent to the processing operation. ^{2}In particular in the context of a written declaration on another matter, safeguards should ensure that the data subject is aware of the fact that and the extent to which consent is given.  
+^{3}In accordance with Council Directive 93/13/EEC¹ a declaration of consent pre-formulated by the controller should be provided in an intelligible and easily accessible form, using clear and plain language and it should not contain unfair terms. ^{4}For consent to be informed, the data subject should be aware at least of the identity of the controller and the purposes of the processing for which the personal data are intended.  
+^{5}Consent should not be regarded as freely given if the data subject has no genuine or free choice or is unable to refuse or withdraw consent without detriment.  
+¹ Council Directive 93/13/EEC of 5 April 1993 on unfair terms in consumer contracts (OJ L 95, 21.4.1993, p. 29).  
+* This title is an unofficial description.
+
+Recital 43 Freely Given Consent*
+^{1}In order to ensure that consent is freely given, consent should not provide a valid legal ground for the processing of personal data in a specific case where there is a clear imbalance between the data subject and the controller, in particular where the controller is a public authority and it is therefore unlikely that consent was freely given in all the circumstances of that specific situation.  
+^{2}Consent is presumed not to be freely given if it does not allow separate consent to be given to different personal data processing operations despite it being appropriate in the individual case, or if the performance of a contract, including the provision of a service, is dependent on the consent despite such consent not being necessary for such performance.  
+* This title is an unofficial description.
+```
+
+Art. 13 GDPR Information to be provided where personal data are collected from the data subject
+1. Where personal data relating to a data subject are collected from the data subject, the controller shall, at the time when personal data are obtained, provide the data subject with all of the following information: 
+    1. the identity and the contact details of the controller and, where applicable, of the controller’s representative;
+    2. the contact details of the data protection officer, where applicable;
+    3. the purposes of the processing for which the personal data are intended as well as the legal basis for the processing;
+    4. where the processing is based on point (f) of Article 6(1), the legitimate interests pursued by the controller or by a third party;
+    5. the recipients or categories of recipients of the personal data, if any;
+    6. where applicable, the fact that the controller intends to transfer personal data to a third country or international organisation and the existence or absence of an adequacy decision by the Commission, or in the case of transfers referred to in Article 46 or 47, or the second subparagraph of Article 49(1), reference to the appropriate or suitable safeguards and the means by which to obtain a copy of them or where they have been made available.  
+2. In addition to the information referred to in paragraph 1, the controller shall, at the time when personal data are obtained, provide the data subject with the following further information necessary to ensure fair and transparent processing: 
+    1. the period for which the personal data will be stored, or if that is not possible, the criteria used to determine that period;
+    2. the existence of the right to request from the controller access to and rectification or erasure of personal data or restriction of processing concerning the data subject or to object to processing as well as the right to data portability;
+    3. where the processing is based on point (a) of Article 6(1) or point (a) of Article 9(2), the existence of the right to withdraw consent at any time, without affecting the lawfulness of processing based on consent before its withdrawal;
+    4. the right to lodge a complaint with a supervisory authority;
+    5. whether the provision of personal data is a statutory or contractual requirement, or a requirement necessary to enter into a contract, as well as whether the data subject is obliged to provide the personal data and of the possible consequences of failure to provide such data;
+    6. the existence of automated decision-making, including profiling, referred to in Article 22(1) and (4) and, at least in those cases, meaningful information about the logic involved, as well as the significance and the envisaged consequences of such processing for the data subject.  
+3. Where the controller intends to further process the personal data for a purpose other than that for which the personal data were collected, the controller shall provide the data subject prior to that further processing with information on that other purpose and with any relevant further information as referred to in paragraph 2.  
+4. Paragraphs 1, 2 and 3 shall not apply where and insofar as the data subject already has the information.  
+
+Recital 60 Information Obligation*  
+^{1}The principles of fair and transparent processing require that the data subject be informed of the existence of the processing operation and its purposes. ^{2}The controller should provide the data subject with any further information necessary to ensure fair and transparent processing taking into account the specific circumstances and context in which the personal data are processed.  
+^{3}Furthermore, the data subject should be informed of the existence of profiling and the consequences of such profiling. ^{4}Where the personal data are collected from the data subject, the data subject should also be informed whether he or she is obliged to provide the personal data and of the consequences, where he or she does not provide such data.  
+^{5}That information may be provided in combination with standardised icons in order to give in an easily visible, intelligible and clearly legible manner, a meaningful overview of the intended processing. ^{6}Where the icons are presented electronically, they should be machine-readable.  
+* This title is an unofficial description.  
+
+Recital 61 Time of Information*  
+^{1}The information in relation to the processing of personal data relating to the data subject should be given to him or her at the time of collection from the data subject, or, where the personal data are obtained from another source, within a reasonable period, depending on the circumstances of the case. ^{2}Where personal data can be legitimately disclosed to another recipient, the data subject should be informed when the personal data are first disclosed to the recipient.  
+^{3}Where the controller intends to process the personal data for a purpose other than that for which they were collected, the controller should provide the data subject prior to that further processing with information on that other purpose and other necessary information. ^{4}Where the origin of the personal data cannot be provided to the data subject because various sources have been used, general information should be provided.  
+* This title is an unofficial description.  
+
+Recital 62 Exceptions to the Obligation to Provide Information*  
+^{1}However, it is not necessary to impose the obligation to provide information where the data subject already possesses the information, where the recording or disclosure of the personal data is expressly laid down by law or where the provision of information to the data subject proves to be impossible or would involve a disproportionate effort.  
+^{2}The latter could in particular be the case where processing is carried out for archiving purposes in the public interest, scientific or historical research purposes or statistical purposes. ^{3}In that regard, the number of data subjects, the age of the data and any appropriate safeguards adopted should be taken into consideration.  
+* This title is an unofficial description.  
+
+Art. 14 GDPR Information to be provided where personal data have not been obtained from the data subject  
+1. Where personal data have not been obtained from the data subject, the controller shall provide the data subject with the following information:  
+    1. the identity and the contact details of the controller and, where applicable, of the controller’s representative;  
+    2. the contact details of the data protection officer, where applicable;  
+    3. the purposes of the processing for which the personal data are intended as well as the legal basis for the processing;  
+    4. the categories of personal data concerned;  
+    5. the recipients or categories of recipients of the personal data, if any;  
+    6. where applicable, that the controller intends to transfer personal data to a recipient in a third country or international organisation and the existence or absence of an adequacy decision by the Commission, or in the case of transfers referred to in Article 46 or 47, or the second subparagraph of Article 49(1), reference to the appropriate or suitable safeguards and the means to obtain a copy of them or where they have been made available.  
+2. In addition to the information referred to in paragraph 1, the controller shall provide the data subject with the following information necessary to ensure fair and transparent processing in respect of the data subject:  
+    1. the period for which the personal data will be stored, or if that is not possible, the criteria used to determine that period;  
+    2. where the processing is based on point (f) of Article 6(1), the legitimate interests pursued by the controller or by a third party;  
+    3. the existence of the right to request from the controller access to and rectification or erasure of personal data or restriction of processing concerning the data subject and to object to processing as well as the right to data portability;  
+    4. where processing is based on point (a) of Article 6(1) or point (a) of Article 9(2), the existence of the right to withdraw consent at any time, without affecting the lawfulness of processing based on consent before its withdrawal;  
+    5. the right to lodge a complaint with a supervisory authority;  
+    6. from which source the personal data originate, and if applicable, whether it came from publicly accessible sources;  
+    7. the existence of automated decision-making, including profiling, referred to in Article 22(1) and (4) and, at least in those cases, meaningful information about the logic involved, as well as the significance and the envisaged consequences of such processing for the data subject.  
+3. The controller shall provide the information referred to in paragraphs 1 and 2:  
+    1. within a reasonable period after obtaining the personal data, but at the latest within one month, having regard to the specific circumstances in which the personal data are processed;  
+    2. if the personal data are to be used for communication with the data subject, at the latest at the time of the first communication to that data subject; or  
+    3. if a disclosure to another recipient is envisaged, at the latest when the personal data are first disclosed.  
+4. Where the controller intends to further process the personal data for a purpose other than that for which the personal data were obtained, the controller shall provide the data subject prior to that further processing with information on that other purpose and with any relevant further information as referred to in paragraph 2.  
+5. Paragraphs 1 to 4 shall not apply where and insofar as:  
+    1. the data subject already has the information;  
+    2. the provision of such information proves impossible or would involve a disproportionate effort, in particular for processing for archiving purposes in the public interest, scientific or historical research purposes or statistical purposes, subject to the conditions and safeguards referred to in Article 89(1) or in so far as the obligation referred to in paragraph 1 of this Article is likely to render impossible or seriously impair the achievement of the objectives of that processing. In such cases the controller shall take appropriate measures to protect the data subject’s rights and freedoms and legitimate interests, including making the information publicly available;  
+    3. obtaining or disclosure is expressly laid down by Union or Member State law to which the controller is subject and which provides appropriate measures to protect the data subject’s legitimate interests; or  
+    4. where the personal data must remain confidential subject to an obligation of professional secrecy regulated by Union or Member State law, including a statutory obligation of secrecy.  
