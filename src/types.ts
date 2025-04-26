@@ -1,4 +1,5 @@
 import type { Database, Enums } from "./db/database.types";
+import { z } from "zod";
 
 /**
  * Common structure for paginated responses.
@@ -102,4 +103,59 @@ export interface InteractionDTO {
   issue_id: string;
   interaction_type: InteractionType;
   created_at: string;
+}
+
+// OpenRouter service types
+export interface OpenRouterMessage {
+  role: "system" | "user" | "assistant";
+  content: string;
+}
+
+export interface OpenRouterResponseFormat {
+  type: "json_schema";
+  json_schema: {
+    name: string;
+    strict?: boolean;
+    schema: object;
+  };
+}
+
+export interface OpenRouterServiceConfig {
+  apiKey: string;
+  defaultModel?: string;
+  baseUrl?: string;
+}
+
+export interface OpenRouterChatCompletionParams {
+  model?: string;
+  temperature?: number;
+  max_tokens?: number;
+  top_p?: number;
+  frequency_penalty?: number;
+  presence_penalty?: number;
+}
+
+export interface OpenRouterChatCompletionOptions {
+  systemPrompt?: string;
+  responseSchema?: z.ZodTypeAny;
+  params?: OpenRouterChatCompletionParams;
+}
+
+export interface OpenRouterApiResponse {
+  choices: {
+    message: {
+      content: string;
+      role: string;
+    };
+    index: number;
+    finish_reason: string;
+  }[];
+  id: string;
+  model: string;
+  created: number;
+  usage: {
+    prompt_tokens: number;
+    completion_tokens: number;
+    total_tokens: number;
+  };
 }

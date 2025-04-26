@@ -1,76 +1,97 @@
 import type { APIRoute } from "astro";
 import { createAnalysisSchema } from "../../lib/schemas/analysis.schema";
 import { AnalysisService } from "../../lib/services/analysis.service";
+import { OpenRouterService } from "../../lib/services/openrouter.service";
 import { DEFAULT_USER_ID } from "../../db/supabase.client";
 import type { AnalysisListResponseDTO, AnalysisSummaryDTO, PaginationDTO } from "../../types";
 
 export const prerender = false;
 
-// Mock data generator for testing UI
-const generateMockAnalyses = (count: number, page: number, limit: number): AnalysisListResponseDTO => {
-  const total = 35; // Total mocked analyses
-  const mockAnalyses: AnalysisSummaryDTO[] = [];
-
-  // Generate the requested number of mock analyses
-  for (let i = 0; i < count; i++) {
-    const id = crypto.randomUUID();
-    const languages = ["en", "pl"];
-    const mockAnalysis: AnalysisSummaryDTO = {
-      id,
-      text_preview: `This is a mock analysis #${page * limit + i + 1} with a preview of text content that would normally come from an actual document...`,
-      status: "completed",
-      detected_language: languages[Math.floor(Math.random() * languages.length)],
-      created_at: new Date(Date.now() - i * 86400000).toISOString(), // Each one day apart
-    };
-    mockAnalyses.push(mockAnalysis);
-  }
-
-  // Create pagination info
-  const pagination: PaginationDTO = {
-    total,
-    page,
-    limit,
-    pages: Math.ceil(total / limit),
-  };
-
-  return {
-    analyses: mockAnalyses,
-    pagination,
-  };
-};
-
-export const GET: APIRoute = async ({ url }) => {
+export const GET: APIRoute = async ({ request, locals }) => {
   try {
-    // Parse query parameters
-    const page = parseInt(url.searchParams.get("page") || "1", 10);
-    const limit = parseInt(url.searchParams.get("limit") || "10", 10);
+    // Extract query parameters
+    const url = new URL(request.url);
+    const page = parseInt(url.searchParams.get("page") || "1");
+    const limit = parseInt(url.searchParams.get("limit") || "10");
 
-    // Validate pagination parameters
-    if (page < 1 || limit < 1 || limit > 50) {
+    // Get analyses from database
+    const {
+      data: analysesData,
+      error,
+      count,
+    } = await locals.supabase
+      .from("analyses")
+      .select("id, document_id, status, created_at", { count: "exact" })
+      .eq("user_id", DEFAULT_USER_ID)
+      .order("created_at", { ascending: false })
+      .range((page - 1) * limit, page * limit - 1);
+
+    if (error) {
       return new Response(
         JSON.stringify({
-          error: "Invalid pagination parameters",
-          details: "Page must be >= 1 and limit must be between 1-50",
+          error: "Database error",
+          message: error.message,
         }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
+        { status: 500, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    // Generate mock data
-    const itemsToGenerate = Math.min(limit, 35 - (page - 1) * limit);
-    const mockData = generateMockAnalyses(Math.max(0, itemsToGenerate), page - 1, limit);
+    // Calculate total pages
+    const totalRecords = count || 0;
+    const totalPages = Math.ceil(totalRecords / limit);
 
-    return new Response(JSON.stringify(mockData), {
+    // For each analysis, get document details to create preview
+    const analysesWithPreviews: AnalysisSummaryDTO[] = [];
+
+    for (const analysis of analysesData || []) {
+      // Get document for this analysis
+      const { data: documentData } = await locals.supabase
+        .from("documents")
+        .select("text_content, detected_language")
+        .eq("id", analysis.document_id)
+        .single();
+
+      if (documentData) {
+        // Create text preview (first 100 characters)
+        const textPreview =
+          documentData.text_content.slice(0, 100) + (documentData.text_content.length > 100 ? "..." : "");
+
+        // Add to result list
+        analysesWithPreviews.push({
+          id: analysis.id,
+          text_preview: textPreview,
+          status: analysis.status,
+          detected_language: documentData.detected_language,
+          created_at: analysis.created_at,
+        });
+      }
+    }
+
+    // Create pagination info
+    const pagination: PaginationDTO = {
+      total: totalRecords,
+      page,
+      limit,
+      pages: totalPages,
+    };
+
+    // Return analyses with pagination
+    const response: AnalysisListResponseDTO = {
+      analyses: analysesWithPreviews,
+      pagination,
+    };
+
+    return new Response(JSON.stringify(response), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Error processing GET analyses request:", error);
+    console.error("Error fetching analyses:", error);
 
     return new Response(
       JSON.stringify({
         error: "Internal server error",
-        message: "Failed to retrieve analyses",
+        message: "Failed to fetch analyses",
       }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
@@ -93,8 +114,26 @@ export const POST: APIRoute = async ({ request, locals }) => {
       );
     }
 
+    // Get OpenRouter API key from environment variables
+    const openRouterApiKey = import.meta.env.OPENROUTER_API_KEY;
+
+    if (!openRouterApiKey) {
+      return new Response(
+        JSON.stringify({
+          error: "Configuration error",
+          message: "OpenRouter API key is not configured",
+        }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    // Initialize OpenRouterService
+    const openRouterService = new OpenRouterService({
+      apiKey: openRouterApiKey as string,
+    });
+
     // Create analysis service and process request
-    const analysisService = new AnalysisService(locals.supabase);
+    const analysisService = new AnalysisService(locals.supabase, openRouterService);
     const result = await analysisService.createAnalysis(DEFAULT_USER_ID, {
       text_content: validationResult.data.text_content,
     });
@@ -109,7 +148,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return new Response(
       JSON.stringify({
         error: "Internal server error",
-        message: "Failed to process analysis request",
+        message: `Failed to process analysis request: ${(error as Error).message}`,
       }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
