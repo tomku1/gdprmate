@@ -3,10 +3,10 @@ import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface LanguageBadgeProps {
-  language: string;
+  language?: string;
 }
 
-export function LanguageBadge({ language }: LanguageBadgeProps) {
+export function LanguageBadge({ language = "unknown" }: LanguageBadgeProps) {
   // Get full language name from code
   const getFullLanguageName = () => {
     const languages: Record<string, string> = {
@@ -16,9 +16,15 @@ export function LanguageBadge({ language }: LanguageBadgeProps) {
       fr: "Français",
       es: "Español",
       it: "Italiano",
+      unknown: "Nieznany",
     };
 
-    return languages[language.toLowerCase()] || language;
+    try {
+      return languages[(language || "unknown").toLowerCase()] || language || "Nieznany";
+    } catch (error) {
+      console.error("Error processing language:", error);
+      return "Nieznany";
+    }
   };
 
   return (
@@ -26,7 +32,7 @@ export function LanguageBadge({ language }: LanguageBadgeProps) {
       <Tooltip>
         <TooltipTrigger asChild>
           <Badge variant="outline" className="text-xs font-normal px-2.5 py-0.5 uppercase">
-            {language}
+            {language || "?"}
           </Badge>
         </TooltipTrigger>
         <TooltipContent>

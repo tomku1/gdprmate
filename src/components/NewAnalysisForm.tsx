@@ -4,6 +4,7 @@ import { AnalyseButton } from "./AnalyseButton";
 import { SpinnerOverlay } from "./SpinnerOverlay";
 import { Alert, AlertDescription } from "./ui/alert";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import { useAuth } from "./hooks/useAuth";
 import type { CreateAnalysisCommand, CreateAnalysisResponseDTO } from "../types";
 
 interface NewAnalysisFormState {
@@ -14,12 +15,16 @@ interface NewAnalysisFormState {
 }
 
 export function NewAnalysisForm() {
+  const { isAuthenticated } = useAuth();
   const [state, setState] = useState<NewAnalysisFormState>({
     text: "",
     isLoading: false,
     error: null,
     validationError: null,
   });
+
+  // Apply different character limits based on authentication status
+  const CHAR_LIMIT = isAuthenticated ? 50000 : 1000;
 
   const validateText = (text: string): string | null => {
     if (text.length === 0) {
@@ -28,8 +33,8 @@ export function NewAnalysisForm() {
     if (text.length < 10) {
       return "Tekst jest zbyt krótki. Wprowadź co najmniej 10 znaków.";
     }
-    if (text.length > 50000) {
-      return "Tekst jest zbyt długi. Maksymalna długość to 50 000 znaków.";
+    if (text.length > CHAR_LIMIT) {
+      return `Tekst jest zbyt długi. Maksymalna długość to ${CHAR_LIMIT} znaków${!isAuthenticated ? " dla niezalogowanych użytkowników" : ""}.`;
     }
     return null;
   };
@@ -71,7 +76,7 @@ export function NewAnalysisForm() {
         if (response.status === 400) {
           errorMessage = "Nieprawidłowe dane. Sprawdź wprowadzony tekst.";
         } else if (response.status === 413) {
-          errorMessage = "Tekst jest zbyt długi. Maksymalna długość to 50 000 znaków.";
+          errorMessage = `Tekst jest zbyt długi. Maksymalna długość to ${CHAR_LIMIT} znaków${!isAuthenticated ? " dla niezalogowanych użytkowników" : ""}.`;
         } else if (response.status === 401) {
           // Przekierowanie do logowania - powinno być obsłużone przez middleware Astro
           window.location.href = "/login";
@@ -104,7 +109,20 @@ export function NewAnalysisForm() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <TextAreaWithCounter value={state.text} onChange={handleTextChange} maxLength={50000} minLength={10} />
+          <TextAreaWithCounter value={state.text} onChange={handleTextChange} maxLength={CHAR_LIMIT} minLength={10} />
+
+          {!isAuthenticated && (
+            <Alert className="mt-4 bg-muted/50">
+              <AlertDescription>
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <span>Limit tekstu dla niezalogowanych użytkowników: 1000 znaków.</span>
+                  <a href="/login" className="text-primary hover:underline text-sm font-medium">
+                    Zaloguj się, aby korzystać z pełnej funkcjonalności
+                  </a>
+                </div>
+              </AlertDescription>
+            </Alert>
+          )}
 
           {state.error && (
             <Alert variant="destructive" className="mt-4">

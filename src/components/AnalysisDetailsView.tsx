@@ -5,6 +5,8 @@ import { IssuesList } from "./IssuesList";
 import { useAnalysisDetails } from "./hooks/useAnalysisDetails";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "./hooks/useAuth";
+import { Alert, AlertDescription } from "./ui/alert";
 import type { IssueCategory } from "@/types";
 
 interface AnalysisDetailsViewProps {
@@ -12,6 +14,7 @@ interface AnalysisDetailsViewProps {
 }
 
 export function AnalysisDetailsView({ analysisId }: AnalysisDetailsViewProps) {
+  const { isAuthenticated } = useAuth();
   const {
     analysis,
     issues,
@@ -97,6 +100,7 @@ export function AnalysisDetailsView({ analysisId }: AnalysisDetailsViewProps) {
       <div className="lg:hidden">
         <DocumentViewer analysisData={analysis} />
         <div className="mt-8">
+          {!isAuthenticated && <AuthNoticeAlert />}
           <FilterControls
             availableCategories={availableCategories}
             selectedCategories={selectedFilters}
@@ -122,6 +126,7 @@ export function AnalysisDetailsView({ analysisId }: AnalysisDetailsViewProps) {
           <DocumentViewer analysisData={analysis} />
         </div>
         <div>
+          {!isAuthenticated && <AuthNoticeAlert />}
           <FilterControls
             availableCategories={availableCategories}
             selectedCategories={selectedFilters}
@@ -160,5 +165,25 @@ export function AnalysisDetailsView({ analysisId }: AnalysisDetailsViewProps) {
         </Button>
       )}
     </div>
+  );
+}
+
+function AuthNoticeAlert() {
+  return (
+    <Alert className="mb-6 bg-muted/50 border border-primary/20">
+      <AlertDescription>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div>
+            <p className="font-medium">Ograniczona widoczność dla niezalogowanych użytkowników</p>
+            <p className="text-sm text-muted-foreground mt-1">
+              Widzisz tylko 2 pierwsze problemy. Zaloguj się, aby zobaczyć wszystkie wyniki analizy.
+            </p>
+          </div>
+          <a href="/login" className="shrink-0">
+            <Button size="sm">Zaloguj się</Button>
+          </a>
+        </div>
+      </AlertDescription>
+    </Alert>
   );
 }

@@ -1,0 +1,11 @@
+---
+import AuthLayout from "../layouts/AuthLayout.astro";
+import { LoginForm } from "../components/auth/LoginForm";
+---
+
+<AuthLayout title="Login">
+  <div class="py-8">
+    <h1 class="text-3xl font-bold text-center mb-8">Log In</h1>
+    <LoginForm client:load />
+  </div>
+</AuthLayout>

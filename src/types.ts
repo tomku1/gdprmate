@@ -23,7 +23,7 @@ export type AnalysisIssueInsert = Database["public"]["Tables"]["analysis_issues"
 export type SuggestionInteraction = Database["public"]["Tables"]["suggestion_interactions"]["Row"];
 export type SuggestionInteractionInsert = Database["public"]["Tables"]["suggestion_interactions"]["Insert"];
 export type AnalysisStatus = Enums<"analysis_status_enum">;
-export type IssueCategory = Enums<"issue_category_enum">;
+export type IssueCategory = "critical" | "important" | "minor";
 export type InteractionType = Enums<"interaction_type_enum">;
 
 /**
@@ -157,5 +157,26 @@ export interface OpenRouterApiResponse {
     prompt_tokens: number;
     completion_tokens: number;
     total_tokens: number;
+  };
+}
+
+export interface Issue {
+  id: string;
+  category: IssueCategory;
+  title: string;
+  description: string;
+  start_index: number;
+  end_index: number;
+  suggestion: string;
+}
+
+export interface Analysis {
+  id: string;
+  text_content: string;
+  created_at: string;
+  issues_pagination: {
+    total: number;
+    limit: number;
+    offset: number;
   };
 }

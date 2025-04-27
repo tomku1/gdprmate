@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import type { AnalysisDetailsDTO, IssueCategory, IssueDTO, PaginationDTO } from "@/types";
+import { useAuth } from "./useAuth";
+import type { AnalysisDetailsDTO, IssueCategory, IssueDTO } from "@/types";
 
 interface AnalysisDetailsState {
   analysis: AnalysisDetailsDTO | null;
@@ -18,6 +19,7 @@ interface UseAnalysisDetailsReturn extends AnalysisDetailsState {
 }
 
 export function useAnalysisDetails(analysisId: string): UseAnalysisDetailsReturn {
+  const { isAuthenticated } = useAuth();
   const [state, setState] = useState<AnalysisDetailsState>({
     analysis: null,
     isLoading: true,
@@ -47,7 +49,6 @@ export function useAnalysisDetails(analysisId: string): UseAnalysisDetailsReturn
         const response = await fetch(url);
 
         if (!response.ok) {
-          const errorText = await response.text();
           let errorMessage = "Wystąpił błąd podczas pobierania analizy.";
 
           switch (response.status) {
@@ -67,17 +68,23 @@ export function useAnalysisDetails(analysisId: string): UseAnalysisDetailsReturn
 
         const data = (await response.json()) as AnalysisDetailsDTO;
 
+        // For non-authenticated users, limit to first 2 issues as per PRD
+        let displayedIssues = [...data.issues];
+        if (!isAuthenticated && displayedIssues.length > 2) {
+          displayedIssues = displayedIssues.slice(0, 2);
+        }
+
         setState((prevState) => {
           // If it's the first page, replace all issues
           // Otherwise, append new issues to existing ones
-          const issues = page === 1 ? [...data.issues] : [...prevState.issues, ...data.issues];
+          const issues = page === 1 ? displayedIssues : [...prevState.issues, ...displayedIssues];
 
           return {
             ...prevState,
             analysis: data,
             issues,
             currentIssuePage: data.issues_pagination.page,
-            totalIssuePages: data.issues_pagination.pages,
+            totalIssuePages: !isAuthenticated ? 1 : data.issues_pagination.pages, // For guests, there's only 1 page (max 2 issues)
             isLoading: false,
             isLoadingIssues: false,
             error: null,
@@ -92,7 +99,7 @@ export function useAnalysisDetails(analysisId: string): UseAnalysisDetailsReturn
         }));
       }
     },
-    [analysisId]
+    [analysisId, isAuthenticated]
   );
 
   useEffect(() => {
@@ -100,10 +107,18 @@ export function useAnalysisDetails(analysisId: string): UseAnalysisDetailsReturn
   }, [fetchAnalysis, state.selectedFilters]);
 
   const loadMoreIssues = useCallback(async () => {
-    if (state.currentIssuePage < state.totalIssuePages && !state.isLoadingIssues) {
+    // Only authenticated users can load more issues
+    if (isAuthenticated && state.currentIssuePage < state.totalIssuePages && !state.isLoadingIssues) {
       await fetchAnalysis(state.currentIssuePage + 1, state.selectedFilters);
     }
-  }, [fetchAnalysis, state.currentIssuePage, state.totalIssuePages, state.isLoadingIssues, state.selectedFilters]);
+  }, [
+    fetchAnalysis,
+    state.currentIssuePage,
+    state.totalIssuePages,
+    state.isLoadingIssues,
+    state.selectedFilters,
+    isAuthenticated,
+  ]);
 
   const setFilters = useCallback((categories: IssueCategory[]) => {
     setState((prevState) => ({
