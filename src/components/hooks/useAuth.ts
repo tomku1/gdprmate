@@ -7,7 +7,6 @@ import {
   mockAuthenticated,
   mockUnauthenticated,
 } from "@/lib/store/authStore";
-import type { User } from "@/lib/store/authStore";
 
 export function useAuth() {
   const auth = useStore(authStore);
@@ -76,7 +75,7 @@ export function useAuth() {
   const logout = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/auth/logout", {
+      await fetch("/api/auth/logout", {
         method: "POST",
       });
 
