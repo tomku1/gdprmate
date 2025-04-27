@@ -65,7 +65,6 @@ export function NewAnalysisForm() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // Nagłówki autoryzacyjne będą obsługiwane przez middleware Astro
         },
         body: JSON.stringify(command),
       });
@@ -73,14 +72,36 @@ export function NewAnalysisForm() {
       if (!response.ok) {
         let errorMessage = "Wystąpił błąd podczas analizy.";
 
-        if (response.status === 400) {
-          errorMessage = "Nieprawidłowe dane. Sprawdź wprowadzony tekst.";
-        } else if (response.status === 413) {
-          errorMessage = `Tekst jest zbyt długi. Maksymalna długość to ${CHAR_LIMIT} znaków${!isAuthenticated ? " dla niezalogowanych użytkowników" : ""}.`;
-        } else if (response.status === 401) {
-          // Przekierowanie do logowania - powinno być obsłużone przez middleware Astro
-          window.location.href = "/login";
-          return;
+        try {
+          // Try to get detailed error from response
+          const errorData = await response.json();
+          if (errorData.error || errorData.message) {
+            errorMessage = errorData.message || errorData.error;
+          }
+        } catch {
+          // If can't parse JSON, use status-based messages
+          if (response.status === 400) {
+            errorMessage = "Nieprawidłowe dane. Sprawdź wprowadzony tekst.";
+          } else if (response.status === 413) {
+            errorMessage = `Tekst jest zbyt długi. Maksymalna długość to ${CHAR_LIMIT} znaków${!isAuthenticated ? " dla niezalogowanych użytkowników" : ""}.`;
+          } else if (response.status === 401) {
+            errorMessage = "Wymagane zalogowanie. Przekierowanie do strony logowania...";
+            // Short delay before redirect to show the message
+            setTimeout(() => {
+              window.location.href = "/login";
+            }, 1500);
+
+            setState((prev) => ({
+              ...prev,
+              isLoading: false,
+              error: errorMessage,
+            }));
+            return;
+          } else if (response.status === 429) {
+            errorMessage = "Zbyt wiele żądań. Spróbuj ponownie za chwilę.";
+          } else if (response.status >= 500) {
+            errorMessage = "Wystąpił błąd po stronie serwera. Spróbuj ponownie później.";
+          }
         }
 
         throw new Error(errorMessage);

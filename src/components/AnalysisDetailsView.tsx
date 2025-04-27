@@ -29,6 +29,13 @@ export function AnalysisDetailsView({ analysisId }: AnalysisDetailsViewProps) {
   } = useAnalysisDetails(analysisId);
 
   const [showScrollTop, setShowScrollTop] = useState(false);
+  // Add client-side rendering flag to prevent hydration mismatches
+  const [isClient, setIsClient] = useState(false);
+
+  // Set isClient to true once component mounts on client
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // Check if we should show scroll to top button
   useEffect(() => {
@@ -100,7 +107,8 @@ export function AnalysisDetailsView({ analysisId }: AnalysisDetailsViewProps) {
       <div className="lg:hidden">
         <DocumentViewer analysisData={analysis} />
         <div className="mt-8">
-          {!isAuthenticated && <AuthNoticeAlert />}
+          {/* Only render auth notice when on client side to prevent hydration mismatch */}
+          {isClient && !isAuthenticated && <AuthNoticeAlert />}
           <FilterControls
             availableCategories={availableCategories}
             selectedCategories={selectedFilters}
@@ -126,7 +134,8 @@ export function AnalysisDetailsView({ analysisId }: AnalysisDetailsViewProps) {
           <DocumentViewer analysisData={analysis} />
         </div>
         <div>
-          {!isAuthenticated && <AuthNoticeAlert />}
+          {/* Only render auth notice when on client side to prevent hydration mismatch */}
+          {isClient && !isAuthenticated && <AuthNoticeAlert />}
           <FilterControls
             availableCategories={availableCategories}
             selectedCategories={selectedFilters}

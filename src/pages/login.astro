@@ -1,6 +1,9 @@
 ---
 import AuthLayout from "../layouts/AuthLayout.astro";
 import { LoginForm } from "../components/auth/LoginForm";
+
+// Ensure this page is server-rendered to properly handle auth state
+export const prerender = false;
 ---
 
 <AuthLayout title="Login">

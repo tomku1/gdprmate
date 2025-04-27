@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "../ui/button";
 import { useAuth } from "../hooks/useAuth";
 import { UserMenu } from "../layout/UserMenu";
@@ -6,6 +6,14 @@ import { UserMenu } from "../layout/UserMenu";
 export function NavBar() {
   const { isAuthenticated, isLoading } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const showAuthButtons = isClient && !isAuthenticated && !isLoading;
+  const showUserMenu = isClient && isAuthenticated;
 
   return (
     <header className="border-b py-4">
@@ -22,19 +30,21 @@ export function NavBar() {
               Strona główna
             </a>
 
-            {isAuthenticated && (
-              <>
-                <a href="/dashboard" className="text-sm font-medium hover:text-primary transition-colors">
-                  Panel
-                </a>
-                <a href="/history" className="text-sm font-medium hover:text-primary transition-colors">
-                  Historia analiz
-                </a>
-              </>
+            {/* Dashboard and History links - initially hidden on server, shown on client if authenticated */}
+            {showUserMenu && (
+              <a href="/dashboard" className="text-sm font-medium hover:text-primary transition-colors">
+                Panel
+              </a>
             )}
 
-            {/* Authentication Buttons */}
-            {!isAuthenticated && !isLoading && (
+            {showUserMenu && (
+              <a href="/history" className="text-sm font-medium hover:text-primary transition-colors">
+                Historia analiz
+              </a>
+            )}
+
+            {/* Authentication Buttons - initially hidden on server, shown on client if not authenticated */}
+            {showAuthButtons && (
               <div className="flex items-center space-x-2">
                 <a href="/login">
                   <Button variant="outline" size="sm">
@@ -47,8 +57,8 @@ export function NavBar() {
               </div>
             )}
 
-            {/* User Menu for authenticated users */}
-            {isAuthenticated && <UserMenu />}
+            {/* User Menu for authenticated users - initially hidden on server, shown on client if authenticated */}
+            {showUserMenu && <UserMenu />}
           </div>
 
           {/* Mobile Navigation Button */}
@@ -105,18 +115,21 @@ export function NavBar() {
                 Strona główna
               </a>
 
-              {isAuthenticated && (
-                <>
-                  <a href="/dashboard" className="text-sm font-medium hover:text-primary transition-colors py-2">
-                    Panel
-                  </a>
-                  <a href="/history" className="text-sm font-medium hover:text-primary transition-colors py-2">
-                    Historia analiz
-                  </a>
-                </>
+              {/* Dashboard and History links - initially hidden on server, shown on client if authenticated */}
+              {showUserMenu && (
+                <a href="/dashboard" className="text-sm font-medium hover:text-primary transition-colors py-2">
+                  Panel
+                </a>
               )}
 
-              {!isAuthenticated && !isLoading && (
+              {showUserMenu && (
+                <a href="/history" className="text-sm font-medium hover:text-primary transition-colors py-2">
+                  Historia analiz
+                </a>
+              )}
+
+              {/* Authentication Buttons - initially hidden on server, shown on client if not authenticated */}
+              {showAuthButtons && (
                 <div className="flex flex-col space-y-2 pt-2">
                   <a href="/login" className="w-full">
                     <Button variant="outline" size="sm" className="w-full">
@@ -131,7 +144,8 @@ export function NavBar() {
                 </div>
               )}
 
-              {isAuthenticated && (
+              {/* User Menu - initially hidden on server, shown on client if authenticated */}
+              {showUserMenu && (
                 <div className="pt-2 border-t">
                   <UserMenu isMobile={true} />
                 </div>

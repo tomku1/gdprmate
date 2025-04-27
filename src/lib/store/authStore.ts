@@ -1,4 +1,4 @@
-import { atom } from 'nanostores';
+import { atom } from "nanostores";
 
 export interface User {
   id: string;
@@ -16,7 +16,7 @@ export interface AuthState {
 const initialState: AuthState = {
   isAuthenticated: false,
   user: null,
-  isLoading: false
+  isLoading: false,
 };
 
 // Create the auth store
@@ -27,7 +27,7 @@ export function setAuthenticated(user: User) {
   authStore.set({
     isAuthenticated: true,
     user,
-    isLoading: false
+    isLoading: false,
   });
 }
 
@@ -35,27 +35,27 @@ export function setUnauthenticated() {
   authStore.set({
     isAuthenticated: false,
     user: null,
-    isLoading: false
+    isLoading: false,
   });
 }
 
 export function setLoading(isLoading: boolean) {
   authStore.set({
     ...authStore.get(),
-    isLoading
+    isLoading,
   });
 }
 
 // For development/testing purposes
 export function mockAuthenticated() {
   setAuthenticated({
-    id: 'mock-user-id',
-    email: 'user@example.com',
-    name: 'Test User'
+    id: "mock-user-id",
+    email: "user@example.com",
+    name: "Test User",
   });
 }
 
 // For development/testing purposes
 export function mockUnauthenticated() {
   setUnauthenticated();
-} 
+}

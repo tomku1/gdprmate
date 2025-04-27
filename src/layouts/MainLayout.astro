@@ -1,12 +1,33 @@
 ---
 import "../styles/global.css";
 import { NavBar } from "../components/layout/NavBar";
+import { AuthProvider } from "../components/providers/AuthProvider";
 
 interface Props {
   title: string;
 }
 
 const { title } = Astro.props;
+
+// Get user session on the server side
+let initialUser = null;
+let isAuthenticated = false;
+
+if (Astro.locals.supabase) {
+  try {
+    const { data } = await Astro.locals.supabase.auth.getUser();
+    if (data?.user) {
+      initialUser = {
+        id: data.user.id,
+        email: data.user.email,
+        name: data.user.user_metadata?.name,
+      };
+      isAuthenticated = true;
+    }
+  } catch (error) {
+    console.error("Failed to get user session:", error);
+  }
+}
 ---
 
 <!doctype html>
@@ -19,18 +40,20 @@ const { title } = Astro.props;
     <title>{title} | GdprMate</title>
   </head>
   <body class="min-h-screen flex flex-col">
-    <NavBar client:load />
-    <main class="flex-1 container mx-auto px-4 py-8">
-      <slot />
-    </main>
+    <AuthProvider client:load initialUser={initialUser} initialIsAuthenticated={isAuthenticated}>
+      <NavBar client:load />
+      <main class="flex-1 container mx-auto px-4 py-8">
+        <slot />
+      </main>
 
-    <footer class="border-t py-4 mt-8">
-      <div class="container mx-auto px-4">
-        <div class="text-center text-sm text-muted-foreground">
-          &copy; {new Date().getFullYear()} GdprMate. Wszelkie prawa zastrzeżone.
+      <footer class="border-t py-4 mt-8">
+        <div class="container mx-auto px-4">
+          <div class="text-center text-sm text-muted-foreground">
+            &copy; {new Date().getFullYear()} GdprMate. Wszelkie prawa zastrzeżone.
+          </div>
         </div>
-      </div>
-    </footer>
+      </footer>
+    </AuthProvider>
   </body>
 </html>
 
