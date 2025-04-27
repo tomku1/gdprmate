@@ -22,7 +22,8 @@ export class OpenRouterService {
       throw new Error("OpenRouter API key is required.");
     }
     this.apiKey = config.apiKey;
-    this.defaultModel = config.defaultModel || "google/gemini-2.0-flash-001";
+    // this.defaultModel = config.defaultModel || "google/gemini-2.0-flash-001";
+    this.defaultModel = config.defaultModel || "google/gemini-2.0-flash-exp:free";
     this.baseUrl = config.baseUrl || "https://openrouter.ai/api/v1";
   }
 
