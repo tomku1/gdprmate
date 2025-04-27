@@ -1,5 +1,5 @@
 ---
-import Layout from '@/layouts/Layout.astro';
+import MainLayout from '../../layouts/MainLayout.astro';
 import { AnalysisDetailsView } from '@/components/AnalysisDetailsView';
 
 // Get analysis ID from URL parameter
@@ -17,7 +17,7 @@ if (!id) {
 }
 ---
 
-<Layout title="Szczegóły analizy GDPR | GdprMate">
+<MainLayout title="Szczegóły analizy GDPR">
   <div class="container max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
     <nav class="flex mb-6" aria-label="Breadcrumb">
       <ol class="inline-flex items-center space-x-1 md:space-x-3">
@@ -54,4 +54,4 @@ if (!id) {
     
     <AnalysisDetailsView client:load analysisId={id} />
   </div>
-</Layout>
+</MainLayout>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { useAuth } from "../hooks/useAuth";
-import { UserMenu } from "./UserMenu";
+import { UserMenu } from "../layout/UserMenu";
 
 export function NavBar() {
   const { isAuthenticated, isLoading } = useAuth();
