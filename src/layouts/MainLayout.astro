@@ -2,6 +2,7 @@
 import "../styles/global.css";
 import { NavBar } from "../components/layout/NavBar";
 import { AuthProvider } from "../components/providers/AuthProvider";
+import type { User } from "../lib/store/authStore";
 
 interface Props {
   title: string;
@@ -19,9 +20,9 @@ if (Astro.locals.supabase) {
     if (data?.user) {
       initialUser = {
         id: data.user.id,
-        email: data.user.email,
+        email: data.user.email || "",
         name: data.user.user_metadata?.name,
-      };
+      } as User;
       isAuthenticated = true;
     }
   } catch (error) {

@@ -18,6 +18,13 @@ describe("NewAnalysisForm", () => {
     // Default mock implementation for useAuth
     vi.spyOn(AuthHook, "useAuth").mockReturnValue({
       isAuthenticated: false,
+      user: null,
+      isLoading: false,
+      checkSession: vi.fn().mockResolvedValue({ success: true, authenticated: false }),
+      login: vi.fn().mockResolvedValue({ success: true }),
+      logout: vi.fn().mockResolvedValue({ success: true }),
+      mockLogin: vi.fn(),
+      mockLogout: vi.fn(),
     });
 
     // Default mock implementation for fetch
@@ -44,7 +51,16 @@ describe("NewAnalysisForm", () => {
 
   it("shows different character limits based on authentication status", () => {
     // Test for unauthenticated user
-    vi.mocked(AuthHook.useAuth).mockReturnValue({ isAuthenticated: false });
+    vi.mocked(AuthHook.useAuth).mockReturnValue({
+      isAuthenticated: false,
+      user: null,
+      isLoading: false,
+      checkSession: vi.fn().mockResolvedValue({ success: true, authenticated: false }),
+      login: vi.fn().mockResolvedValue({ success: true }),
+      logout: vi.fn().mockResolvedValue({ success: true }),
+      mockLogin: vi.fn(),
+      mockLogout: vi.fn(),
+    });
     render(<NewAnalysisForm />);
     expect(screen.getByText(/Limit tekstu dla niezalogowanych użytkowników: 1000 znaków/)).toBeInTheDocument();
 
@@ -52,7 +68,16 @@ describe("NewAnalysisForm", () => {
     cleanup();
 
     // Test for authenticated user
-    vi.mocked(AuthHook.useAuth).mockReturnValue({ isAuthenticated: true });
+    vi.mocked(AuthHook.useAuth).mockReturnValue({
+      isAuthenticated: true,
+      user: { id: "test-user-id", email: "test@example.com", name: "Test User" },
+      isLoading: false,
+      checkSession: vi.fn().mockResolvedValue({ success: true, authenticated: true }),
+      login: vi.fn().mockResolvedValue({ success: true }),
+      logout: vi.fn().mockResolvedValue({ success: true }),
+      mockLogin: vi.fn(),
+      mockLogout: vi.fn(),
+    });
     render(<NewAnalysisForm />);
     expect(screen.queryByText(/Limit tekstu dla niezalogowanych/)).not.toBeInTheDocument();
   });
