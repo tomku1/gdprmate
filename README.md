@@ -80,14 +80,67 @@ Open `http://localhost:3000` in your browser.
 
 ## Available Scripts
 
-| Command            | Description                              |
-| ------------------ | ---------------------------------------- |
-| `npm run dev`      | Start local dev server (`astro dev`)     |
-| `npm run build`    | Build for production (`astro build`)     |
-| `npm run preview`  | Preview production build (`astro preview`)|
-| `npm run lint`     | Run ESLint checks                        |
-| `npm run lint:fix` | Auto-fix lint issues                     |
-| `npm run format`   | Format code with Prettier                |
+| Command                 | Description                              |
+| ----------------------- | ---------------------------------------- |
+| `npm run dev`           | Start local dev server (`astro dev`)     |
+| `npm run build`         | Build for production (`astro build`)     |
+| `npm run preview`       | Preview production build (`astro preview`)|
+| `npm run lint`          | Run ESLint checks                        |
+| `npm run lint:fix`      | Auto-fix lint issues                     |
+| `npm run format`        | Format code with Prettier                |
+| `npm run test`          | Run unit tests (Vitest)                  |
+| `npm run test:watch`    | Run unit tests in watch mode             |
+| `npm run test:ui`       | Run unit tests with UI                   |
+| `npm run test:coverage` | Run unit tests with coverage report      |
+| `npm run test:e2e`      | Run E2E tests (Playwright)               |
+| `npm run test:e2e:ui`   | Run E2E tests with UI                    |
+| `npm run test:e2e:codegen` | Generate E2E tests with Playwright    |
+
+## Testing
+
+### Unit Testing with Vitest
+
+We use Vitest for unit and component testing:
+
+```bash
+# Run all unit tests
+npm run test
+
+# Run tests in watch mode during development
+npm run test:watch
+
+# Run tests with UI for debugging
+npm run test:ui
+
+# Generate coverage report
+npm run test:coverage
+```
+
+Unit tests follow these conventions:
+- Test files are located next to the implementation files with a `.test.tsx` or `.spec.tsx` suffix
+- Components are tested with React Testing Library
+- MSW is used for mocking API requests
+
+### E2E Testing with Playwright
+
+We use Playwright for end-to-end testing:
+
+```bash
+# Run all E2E tests
+npm run test:e2e
+
+# Run E2E tests with UI for debugging
+npm run test:e2e:ui
+
+# Generate E2E tests with Playwright's codegen tool
+npm run test:e2e:codegen
+```
+
+E2E tests follow these conventions:
+- Tests are located in the `e2e` directory
+- Page Object Model pattern is used for better maintainability
+- Tests run against a preview build of the application
+- Visual comparison is used for detecting UI regressions
 
 ## Project Scope
 
