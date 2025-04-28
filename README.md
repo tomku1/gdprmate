@@ -32,6 +32,12 @@ GdprMate is a web-based assistant for GDPR compliance. It helps users quickly an
 - **AI/LLM Integration**
   - Openrouter.ai (connects to OpenAI, Anthropic, Google, etc.; cost limits)
 
+- **Testing**
+  - Vitest (unit and integration tests)
+  - React Testing Library (component testing)
+  - Playwright (E2E testing)
+  - MSW (API mocking)
+
 - **CI/CD & Hosting**
   - GitHub Actions  
   - DigitalOcean (Docker)

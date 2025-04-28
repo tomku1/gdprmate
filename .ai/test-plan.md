@@ -78,7 +78,7 @@ Następujące elementy nie będą objęte testami w ramach tej fazy (MVP):
 *   **Testy Jednostkowe (Unit Tests):**
     *   **Cel:** Weryfikacja poprawności działania izolowanych fragmentów kodu (komponenty React, funkcje pomocnicze, metody serwisów z zamockowanymi zależnościami).
     *   **Zakres:** Logika komponentów UI (renderowanie warunkowe, obsługa zdarzeń), funkcje w `src/lib/utils.ts`, logika walidacji w schematach Zod, metody `AnalysisService` i `OpenRouterService` z mockami Supabase/fetch/LLM.
-    *   **Narzędzia:** Vitest
+    *   **Narzędzia:** Vitest, React Testing Library
 *   **Testy Integracyjne (Integration Tests):**
     *   **Cel:** Sprawdzenie poprawności współpracy pomiędzy różnymi modułami i komponentami systemu.
     *   **Zakres:** Interakcja komponentów React (np. formularz -> lista wyników), współpraca serwisów (`AnalysisService` z `OpenRouterService`, `AnalysisService` z `SupabaseClient`), działanie endpointów API Astro wraz z middlewarem i logiką serwisową, interakcje z bazą danych (testy z użyciem lokalnej/testowej instancji Supabase).
@@ -178,7 +178,7 @@ Poniżej przedstawiono przykładowe, wysokopoziomowe scenariusze testowe. Szczeg
 
 ## 6. Narzędzia do Testowania
 
-*   **Testy Jednostkowe/Integracyjne:** Vitest
+*   **Testy Jednostkowe/Integracyjne:** Vitest, React Testing Library
 *   **Testy E2E:** Playwright (preferowany ze względu na lepszą obsługę nowoczesnych frameworków jak Astro)
 *   **Testy API:** Postman (manualne i automatyzacja), curl, Supertest (w ramach testów integracyjnych Node.js).
 *   **Zarządzanie Testami i Błędami:** GitHub Issues (lub dedykowane narzędzie jak Jira, TestRail - w zależności od preferencji zespołu).
