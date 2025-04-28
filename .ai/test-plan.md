@@ -1,4 +1,3 @@
-
 # Plan Testów Aplikacji GdprMate
 
 ## 1. Wprowadzenie i Cele Testowania

@@ -115,11 +115,12 @@ export class AnalysisService {
       // Ensure we got a valid response with issues
       if (
         typeof result !== "object" ||
+        result === null ||
         !("issues" in result) ||
         !Array.isArray(result.issues) ||
         result.issues.length === 0
       ) {
-        throw new AnalysisError("Analysis failed: Invalid or empty response from OpenRouter");
+        throw new AnalysisError("Analysis failed: Invalid response structure from OpenRouter");
       }
 
       const typedResult = result as GdprAnalysisResult;

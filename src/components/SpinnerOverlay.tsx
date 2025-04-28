@@ -9,7 +9,10 @@ export function SpinnerOverlay({ isLoading }: SpinnerOverlayProps) {
   if (!isLoading) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm">
+    <div
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm"
+      data-testid="spinner-overlay"
+    >
       <div className="bg-background p-6 rounded-lg shadow-xl flex flex-col items-center max-w-md">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
         <div className="mt-4 text-center">
