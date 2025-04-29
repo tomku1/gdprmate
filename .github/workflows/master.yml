@@ -1,8 +1,10 @@
-name: Pull Request Workflow
+name: Test & Build Master
 
 on:
-  pull_request:
-    branches: [main]
+  push:
+    branches:
+      - master
+  workflow_dispatch:
 
 jobs:
   lint:
