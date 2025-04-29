@@ -34,7 +34,7 @@ export function PasswordRecoveryForm() {
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const email = e.target.value;
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       email,
       validationError: email ? null : prev.validationError,
@@ -43,14 +43,14 @@ export function PasswordRecoveryForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const validationError = validateEmail(state.email);
     if (validationError) {
-      setState(prev => ({ ...prev, validationError }));
+      setState((prev) => ({ ...prev, validationError }));
       return;
     }
 
-    setState(prev => ({ ...prev, isLoading: true, error: null, success: false }));
+    setState((prev) => ({ ...prev, isLoading: true, error: null, success: false }));
 
     try {
       const response = await fetch("/api/auth/reset-password", {
@@ -69,14 +69,14 @@ export function PasswordRecoveryForm() {
       }
 
       // Pokazujemy komunikat sukcesu nawet jeśli email nie istnieje - ze względów bezpieczeństwa
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         isLoading: false,
         success: true,
         email: "", // Czyszczenie pola po sukcesie
       }));
     } catch (error) {
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         isLoading: false,
         error: error instanceof Error ? error.message : "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później.",
@@ -89,25 +89,19 @@ export function PasswordRecoveryForm() {
       <Card>
         <CardHeader>
           <CardTitle>Odzyskaj hasło</CardTitle>
-          <CardDescription>
-            Wpisz swój adres email, aby otrzymać link do resetowania hasła
-          </CardDescription>
+          <CardDescription>Wpisz swój adres email, aby otrzymać link do resetowania hasła</CardDescription>
         </CardHeader>
         <CardContent>
           {state.success ? (
             <div className="space-y-4">
               <Alert className="bg-green-50 text-green-800 border-green-200">
                 <AlertDescription>
-                  Jeśli podany adres email istnieje w naszej bazie, to wysłaliśmy na niego link do resetowania hasła. 
+                  Jeśli podany adres email istnieje w naszej bazie, to wysłaliśmy na niego link do resetowania hasła.
                   Sprawdź swoją skrzynkę (oraz folder spam) i postępuj zgodnie z instrukcjami.
                 </AlertDescription>
               </Alert>
               <div className="text-center">
-                <Button 
-                  variant="outline" 
-                  onClick={() => window.location.href = "/login"}
-                  className="mt-2"
-                >
+                <Button variant="outline" onClick={() => (window.location.href = "/login")} className="mt-2">
                   Powrót do logowania
                 </Button>
               </div>
@@ -115,7 +109,10 @@ export function PasswordRecoveryForm() {
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                <label
+                  htmlFor="email"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
                   Email
                 </label>
                 <Input
@@ -127,9 +124,7 @@ export function PasswordRecoveryForm() {
                   onChange={handleEmailChange}
                   aria-invalid={!!state.validationError}
                 />
-                {state.validationError && (
-                  <p className="text-sm text-destructive">{state.validationError}</p>
-                )}
+                {state.validationError && <p className="text-sm text-destructive">{state.validationError}</p>}
               </div>
 
               {state.error && (
@@ -139,14 +134,10 @@ export function PasswordRecoveryForm() {
               )}
 
               <div className="flex flex-col space-y-3">
-                <Button 
-                  type="submit" 
-                  disabled={state.isLoading}
-                  className="w-full"
-                >
+                <Button type="submit" disabled={state.isLoading} className="w-full">
                   {state.isLoading ? "Wysyłanie..." : "Wyślij link resetujący"}
                 </Button>
-                
+
                 <div className="text-center text-sm">
                   <a href="/login" className="text-primary underline underline-offset-4 hover:text-primary/90">
                     Powrót do logowania
@@ -161,4 +152,4 @@ export function PasswordRecoveryForm() {
       <SpinnerOverlay isLoading={state.isLoading} />
     </div>
   );
-} 
+}

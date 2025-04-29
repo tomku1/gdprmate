@@ -13,7 +13,7 @@ interface UserMenuProps {
 }
 
 export function UserMenu({ isMobile = false }: UserMenuProps) {
-  const { user, logout, isLoading } = useAuth();
+  const { user, logout } = useAuth();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async () => {
@@ -26,12 +26,6 @@ export function UserMenu({ isMobile = false }: UserMenuProps) {
     } finally {
       setIsLoggingOut(false);
     }
-  };
-
-  // For testing - the mockLogout function can be used here
-  const handleMockLogout = () => {
-    logout();
-    window.location.href = "/";
   };
 
   if (isMobile) {

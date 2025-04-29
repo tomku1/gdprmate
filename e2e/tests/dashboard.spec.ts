@@ -32,7 +32,6 @@ test.describe("Dashboard Analysis Flow", () => {
     // Check that the analyze button is disabled
     await expect(dashboardPage.analyzeButton).toBeDisabled();
 
-
     // Wait a moment for validation to process
     await page.waitForTimeout(300);
 

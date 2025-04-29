@@ -30,14 +30,14 @@ export function PasswordResetForm() {
     // Pobieranie tokena z URL
     const url = new URL(window.location.href);
     const token = url.searchParams.get("token");
-    
+
     if (!token) {
-      setState(prev => ({ 
-        ...prev, 
-        error: "Brak lub nieprawidłowy token resetowania hasła. Użyj kompletnego linku z wiadomości email." 
+      setState((prev) => ({
+        ...prev,
+        error: "Brak lub nieprawidłowy token resetowania hasła. Użyj kompletnego linku z wiadomości email.",
       }));
     } else {
-      setState(prev => ({ ...prev, token }));
+      setState((prev) => ({ ...prev, token }));
     }
   }, []);
 
@@ -58,30 +58,30 @@ export function PasswordResetForm() {
       errors.passwordConfirm = "Hasła nie są identyczne";
     }
 
-    setState(prev => ({ ...prev, validationErrors: errors }));
+    setState((prev) => ({ ...prev, validationErrors: errors }));
     return Object.keys(errors).length === 0;
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       [name]: value,
       validationErrors: {
         ...prev.validationErrors,
         [name]: "", // Czyszczenie błędu dla pola, które jest edytowane
-      }
+      },
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm() || !state.token) {
       return;
     }
 
-    setState(prev => ({ ...prev, isLoading: true, error: null }));
+    setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
     try {
       const response = await fetch("/api/auth/update-password", {
@@ -92,7 +92,7 @@ export function PasswordResetForm() {
         body: JSON.stringify({
           newPassword: state.newPassword,
           passwordConfirm: state.passwordConfirm,
-          token: state.token
+          token: state.token,
         }),
       });
 
@@ -109,7 +109,7 @@ export function PasswordResetForm() {
         throw new Error(errorMessage);
       }
 
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         isLoading: false,
         success: true,
@@ -117,7 +117,7 @@ export function PasswordResetForm() {
         passwordConfirm: "",
       }));
     } catch (error) {
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         isLoading: false,
         error: error instanceof Error ? error.message : "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później.",
@@ -131,9 +131,7 @@ export function PasswordResetForm() {
         <Card>
           <CardHeader>
             <CardTitle>Hasło zostało zresetowane</CardTitle>
-            <CardDescription>
-              Twoje hasło zostało pomyślnie zmienione
-            </CardDescription>
+            <CardDescription>Twoje hasło zostało pomyślnie zmienione</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <Alert className="bg-green-50 text-green-800 border-green-200">
@@ -142,10 +140,7 @@ export function PasswordResetForm() {
               </AlertDescription>
             </Alert>
             <div className="text-center">
-              <Button 
-                onClick={() => window.location.href = "/login"}
-                className="w-full"
-              >
+              <Button onClick={() => (window.location.href = "/login")} className="w-full">
                 Przejdź do logowania
               </Button>
             </div>
@@ -160,14 +155,15 @@ export function PasswordResetForm() {
       <Card>
         <CardHeader>
           <CardTitle>Zresetuj hasło</CardTitle>
-          <CardDescription>
-            Wprowadź nowe hasło dla swojego konta
-          </CardDescription>
+          <CardDescription>Wprowadź nowe hasło dla swojego konta</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="newPassword" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              <label
+                htmlFor="newPassword"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
                 Nowe hasło
               </label>
               <Input
@@ -178,15 +174,22 @@ export function PasswordResetForm() {
                 value={state.newPassword}
                 onChange={handleInputChange}
                 aria-invalid={!!state.validationErrors.newPassword}
-                disabled={!state.token || state.error === "Brak lub nieprawidłowy token resetowania hasła. Użyj kompletnego linku z wiadomości email."}
+                disabled={
+                  !state.token ||
+                  state.error ===
+                    "Brak lub nieprawidłowy token resetowania hasła. Użyj kompletnego linku z wiadomości email."
+                }
               />
               {state.validationErrors.newPassword && (
                 <p className="text-sm text-destructive">{state.validationErrors.newPassword}</p>
               )}
             </div>
-            
+
             <div className="space-y-2">
-              <label htmlFor="passwordConfirm" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              <label
+                htmlFor="passwordConfirm"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
                 Potwierdź nowe hasło
               </label>
               <Input
@@ -197,7 +200,11 @@ export function PasswordResetForm() {
                 value={state.passwordConfirm}
                 onChange={handleInputChange}
                 aria-invalid={!!state.validationErrors.passwordConfirm}
-                disabled={!state.token || state.error === "Brak lub nieprawidłowy token resetowania hasła. Użyj kompletnego linku z wiadomości email."}
+                disabled={
+                  !state.token ||
+                  state.error ===
+                    "Brak lub nieprawidłowy token resetowania hasła. Użyj kompletnego linku z wiadomości email."
+                }
               />
               {state.validationErrors.passwordConfirm && (
                 <p className="text-sm text-destructive">{state.validationErrors.passwordConfirm}</p>
@@ -211,14 +218,10 @@ export function PasswordResetForm() {
             )}
 
             <div className="flex flex-col space-y-3">
-              <Button 
-                type="submit" 
-                disabled={state.isLoading || !state.token || !!state.error}
-                className="w-full"
-              >
+              <Button type="submit" disabled={state.isLoading || !state.token || !!state.error} className="w-full">
                 {state.isLoading ? "Przetwarzanie..." : "Zresetuj hasło"}
               </Button>
-              
+
               <div className="text-center text-sm">
                 <a href="/login" className="text-primary underline underline-offset-4 hover:text-primary/90">
                   Powrót do logowania
@@ -232,4 +235,4 @@ export function PasswordResetForm() {
       <SpinnerOverlay isLoading={state.isLoading} />
     </div>
   );
-} 
+}
