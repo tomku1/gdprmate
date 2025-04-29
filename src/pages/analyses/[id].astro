@@ -20,7 +20,10 @@ const isAuthenticated = !!user;
     <nav class="flex mb-6" aria-label="Breadcrumb">
       <ol class="inline-flex items-center space-x-1 md:space-x-3">
         <li class="inline-flex items-center">
-          <a href={isAuthenticated ? "/dashboard" : "/"} class="inline-flex items-center text-sm text-muted-foreground hover:text-foreground">
+          <a
+            href={isAuthenticated ? "/dashboard" : "/"}
+            class="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
+          >
             <svg
               class="w-3 h-3 me-2.5"
               aria-hidden="true"
@@ -60,7 +63,10 @@ const isAuthenticated = !!user;
     <div class="border-b pb-4 mb-6">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <h1 class="text-2xl sm:text-3xl font-bold">Szczegóły analizy</h1>
-        <a href={isAuthenticated ? "/dashboard" : "/"} class="inline-flex items-center text-sm text-primary hover:underline">
+        <a
+          href={isAuthenticated ? "/dashboard" : "/"}
+          class="inline-flex items-center text-sm text-primary hover:underline"
+        >
           <svg
             class="w-3.5 h-3.5 me-2 rtl:rotate-180"
             aria-hidden="true"
