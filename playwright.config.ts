@@ -1,4 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
+import dotenv from "dotenv";
+import path from "path";
+
+dotenv.config({ path: path.resolve(process.cwd(), ".env.test") });
 
 export default defineConfig({
   testDir: "./e2e",
@@ -8,7 +12,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: "html",
   use: {
-    baseURL: "http://localhost:4321",
+    baseURL: "http://localhost:4322",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
   },
@@ -19,8 +23,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "npm run preview",
-    url: "http://localhost:4321",
+    command: "npm run preview -- --port 4322",
+    url: "http://localhost:4322",
     reuseExistingServer: !process.env.CI,
     stdout: "pipe",
     stderr: "pipe",

@@ -28,6 +28,7 @@ export function TextAreaWithCounter({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         aria-label={ariaLabel}
+        data-test-id="analysis-text-input"
         className={`min-h-[300px] ${isOverLimit ? "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500" : ""}`}
       />
       <div className={`text-sm flex justify-end ${counterColor}`}>

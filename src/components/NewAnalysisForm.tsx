@@ -121,7 +121,7 @@ export function NewAnalysisForm() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto" data-test-id="analysis-form">
       <Card>
         <CardHeader>
           <CardTitle>Wprowadź tekst do analizy</CardTitle>
