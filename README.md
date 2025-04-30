@@ -12,6 +12,7 @@
 5. [Project Scope](#project-scope)
 6. [Project Status](#project-status)
 7. [License](#license)
+8. [Hosting](#hosting)
 
 ## Project Description
 
@@ -167,4 +168,20 @@ E2E tests follow these conventions:
 ## Project Status
 
 This project is currently in **MVP** development. Core features are implemented; focus is on improving analysis accuracy, UX, and stability.
+
+## Hosting
+
+This application is hosted on **Cloudflare Pages**.
+
+### Why Cloudflare Pages?
+
+Cloudflare Pages was chosen due to several key advantages relevant to this project's current stage and future potential:
+
+1.  **Cost-Effectiveness:** Offers an extremely generous free tier that supports commercial use, including unlimited sites, requests, and bandwidth (subject to fair use). This significantly minimizes initial operational costs while allowing the project to scale. The paid plan is also very competitively priced with a flat monthly fee.
+2.  **Performance:** Leverages Cloudflare's extensive global edge network, ensuring fast load times for users worldwide by serving content from locations close to them.
+3.  **Astro Integration:** Provides first-class support for Astro, including seamless deployment for static sites, SSR (Server-Side Rendering), and Edge Functions via Cloudflare Workers.
+4.  **Scalability:** The underlying infrastructure (Workers, Edge Network) is built for high scalability, accommodating potential growth into a commercial product without requiring platform migrations.
+5.  **Developer Experience:** Offers simple Git-based deployments (connects directly to GitHub/GitLab) and provides features like automatic preview deployments for branches.
+
+While platforms like Vercel or Netlify also offer excellent Astro support, Cloudflare Pages provides the best balance of features, performance, and cost-effectiveness, especially considering the possibility of future commercialization on a budget.
 
