@@ -102,8 +102,3 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy ./dist --project-name=gdprmate
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          # Make sure environment variables are passed to Cloudflare
-          secrets: |
-            SUPABASE_URL
-            SUPABASE_KEY
-            OPENROUTER_API_KEY 
