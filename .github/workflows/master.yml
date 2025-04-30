@@ -54,9 +54,9 @@ jobs:
       contents: read
       deployments: write
     env:
-      SUPABASE_URL: ${{ secrets.SUPABASE_URL_PROD }}
-      SUPABASE_KEY: ${{ secrets.SUPABASE_KEY_PROD }}
-      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY_PROD }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
