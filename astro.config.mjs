@@ -13,6 +13,8 @@ export default defineConfig({
   server: { port: 3000 },
   env: {
     schema: {
+      // The key is making sure these are set to server context with secret access
+      // This ensures they're available in import.meta.env on the server
       SUPABASE_URL: envField.string({ context: "server", access: "secret" }),
       SUPABASE_KEY: envField.string({ context: "server", access: "secret" }),
       OPENROUTER_API_KEY: envField.string({ context: "server", access: "secret" }),
@@ -26,6 +28,12 @@ export default defineConfig({
       alias: {
         ...(import.meta.env.PROD ? { "react-dom/server": "react-dom/server.edge" } : {}),
       },
+    },
+    // Add this to ensure environment variables are correctly passed to the build
+    define: {
+      "import.meta.env.SUPABASE_URL": JSON.stringify(process.env.SUPABASE_URL),
+      "import.meta.env.SUPABASE_KEY": JSON.stringify(process.env.SUPABASE_KEY),
+      "import.meta.env.OPENROUTER_API_KEY": JSON.stringify(process.env.OPENROUTER_API_KEY),
     },
   },
   adapter: cloudflare(),

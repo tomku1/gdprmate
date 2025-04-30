@@ -4,10 +4,23 @@ import { createServerClient, type CookieOptionsWithName, type CookieOptions } fr
 
 import type { Database } from "./database.types";
 
-const supabaseUrl = import.meta.env.SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.SUPABASE_KEY;
+// Add better error handling for environment variables
+const getEnvVariable = (key: string): string => {
+  const value = import.meta.env[key];
+  if (!value) {
+    console.error(`Environment variable ${key} is not defined. This will cause Supabase client initialization to fail.`);
+    return ""; // Return empty string to avoid undefined errors but the client will still fail properly
+  }
+  return value;
+};
 
-export const supabaseClient = createClient<Database>(supabaseUrl, supabaseAnonKey);
+const supabaseUrl = getEnvVariable("SUPABASE_URL");
+const supabaseAnonKey = getEnvVariable("SUPABASE_KEY");
+
+// Only create the client if we have the required environment variables
+export const supabaseClient = (supabaseUrl && supabaseAnonKey) 
+  ? createClient<Database>(supabaseUrl, supabaseAnonKey)
+  : undefined as any; // This will fail at runtime if used but prevents immediate crash
 
 export type SupabaseClient = typeof supabaseClient;
 
@@ -34,6 +47,11 @@ interface CookieToSet {
 }
 
 export const createSupabaseServerInstance = (context: { headers: Headers; cookies: AstroCookies }) => {
+  // Check if env variables are available before creating the client
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error(`Cannot create Supabase server instance. Missing environment variables: ${!supabaseUrl ? 'SUPABASE_URL' : ''} ${!supabaseAnonKey ? 'SUPABASE_KEY' : ''}`);
+  }
+
   const supabase = createServerClient<Database>(supabaseUrl, supabaseAnonKey, {
     cookieOptions,
     cookies: {

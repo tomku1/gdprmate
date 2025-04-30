@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       
-      - name: Run linting
+      - name: Run lintingx
         run: npm run lint
 
   test:
@@ -70,6 +70,28 @@ jobs:
       - name: Install dependencies
         run: npm ci
       
+      - name: Verify environment variables
+        run: |
+          # Print masked versions to verify they exist
+          if [ -z "$SUPABASE_URL" ]; then
+            echo "::error::SUPABASE_URL is not set"
+            exit 1
+          else
+            echo "SUPABASE_URL is set"
+          fi
+          if [ -z "$SUPABASE_KEY" ]; then
+            echo "::error::SUPABASE_KEY is not set"
+            exit 1
+          else
+            echo "SUPABASE_KEY is set"
+          fi
+          if [ -z "$OPENROUTER_API_KEY" ]; then
+            echo "::error::OPENROUTER_API_KEY is not set"
+            exit 1
+          else
+            echo "OPENROUTER_API_KEY is set"
+          fi
+      
       - name: Build project
         run: npm run build
       
@@ -79,4 +101,9 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy ./dist --project-name=gdprmate
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }} 
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          # Make sure environment variables are passed to Cloudflare
+          secrets: |
+            SUPABASE_URL
+            SUPABASE_KEY
+            OPENROUTER_API_KEY 
