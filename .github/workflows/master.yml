@@ -53,6 +53,10 @@ jobs:
     permissions:
       contents: read
       deployments: write
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL_PROD }}
+      SUPABASE_KEY: ${{ secrets.SUPABASE_KEY_PROD }}
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY_PROD }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -68,10 +72,6 @@ jobs:
       
       - name: Build project
         run: npm run build
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL_PROD }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY_PROD }}
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
       
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
@@ -79,5 +79,4 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy ./dist --project-name=gdprmate
-          # GitHub Deployments for better tracking
           gitHubToken: ${{ secrets.GITHUB_TOKEN }} 
