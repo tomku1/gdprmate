@@ -31,9 +31,9 @@ export default defineConfig({
     },
     // Add this to ensure environment variables are correctly passed to the build
     define: {
-      "import.meta.env.SUPABASE_URL": JSON.stringify(process.env.SUPABASE_URL),
-      "import.meta.env.SUPABASE_KEY": JSON.stringify(process.env.SUPABASE_KEY),
-      "import.meta.env.OPENROUTER_API_KEY": JSON.stringify(process.env.OPENROUTER_API_KEY),
+      "import.meta.env.SUPABASE_URL": JSON.stringify(import.meta.env.SUPABASE_URL),
+      "import.meta.env.SUPABASE_KEY": JSON.stringify(import.meta.env.SUPABASE_KEY),
+      "import.meta.env.OPENROUTER_API_KEY": JSON.stringify(import.meta.env.OPENROUTER_API_KEY),
     },
   },
   adapter: cloudflare(),
