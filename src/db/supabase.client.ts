@@ -21,6 +21,7 @@ const supabaseAnonKey = getEnvVariable("SUPABASE_KEY");
 
 // Only create the client if we have the required environment variables
 export const supabaseClient =
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   supabaseUrl && supabaseAnonKey ? createClient<Database>(supabaseUrl, supabaseAnonKey) : (undefined as any); // This will fail at runtime if used but prevents immediate crash
 
 export type SupabaseClient = typeof supabaseClient;
