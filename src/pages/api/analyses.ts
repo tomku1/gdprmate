@@ -136,7 +136,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     // Create analysis service and process request
     const analysisService = new AnalysisService(locals.supabase, openRouterService);
-    const result = await analysisService.createAnalysis(DEFAULT_USER_ID, {
+
+    // Determine user ID: use authenticated user if available, otherwise fallback to default
+    const userId = locals.user ? locals.user.id : DEFAULT_USER_ID;
+
+    const result = await analysisService.createAnalysis(userId, {
       text_content: validationResult.data.text_content,
     });
 
