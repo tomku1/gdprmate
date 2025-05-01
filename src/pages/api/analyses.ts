@@ -1,4 +1,6 @@
 import type { APIRoute } from "astro";
+// Import server-side env variables directly
+import { OPENROUTER_API_KEY } from "astro:env/server";
 import { createAnalysisSchema } from "../../lib/schemas/analysis.schema";
 import { AnalysisService } from "../../lib/services/analysis.service";
 import { OpenRouterService } from "../../lib/services/openrouter.service";
@@ -114,10 +116,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
       );
     }
 
-    // Get OpenRouter API key from environment variables
-    const openRouterApiKey = import.meta.env.OPENROUTER_API_KEY;
-
-    if (!openRouterApiKey) {
+    // Use the imported OPENROUTER_API_KEY directly
+    if (!OPENROUTER_API_KEY) {
+      // This check might still be useful in case the env var is somehow unset despite the schema
+      console.error("OpenRouter API Key is not configured in the environment.");
       return new Response(
         JSON.stringify({
           error: "Configuration error",
@@ -129,7 +131,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     // Initialize OpenRouterService
     const openRouterService = new OpenRouterService({
-      apiKey: openRouterApiKey as string,
+      apiKey: OPENROUTER_API_KEY, // Use the imported variable directly
     });
 
     // Create analysis service and process request
