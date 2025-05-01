@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "./useAuth";
 import type { AnalysisDetailsDTO, IssueCategory, IssueDTO } from "@/types";
+import { temporaryAnalysisService } from "@/lib/services/temporary-analysis.service";
 
 interface AnalysisDetailsState {
   analysis: AnalysisDetailsDTO | null;
@@ -40,6 +41,38 @@ export function useAnalysisDetails(analysisId: string): UseAnalysisDetailsReturn
           isLoadingIssues: page > 1,
         }));
 
+        // First check if this is a temporary analysis (for non-logged users)
+        const tempAnalysis = temporaryAnalysisService.getAnalysis(analysisId);
+
+        if (tempAnalysis) {
+          // We have a temporary analysis, use it instead of making an API call
+          let filteredIssues = tempAnalysis.issues;
+
+          // Apply category filter if needed
+          if (categories.length > 0) {
+            filteredIssues = filteredIssues.filter((issue) => categories.includes(issue.category));
+          }
+
+          // For non-authenticated users, limit to first 2 issues as per PRD
+          if (!isAuthenticated && filteredIssues.length > 2) {
+            filteredIssues = filteredIssues.slice(0, 2);
+          }
+
+          setState({
+            analysis: tempAnalysis,
+            issues: filteredIssues,
+            isLoading: false,
+            isLoadingIssues: false,
+            error: null,
+            selectedFilters: categories,
+            currentIssuePage: 1,
+            totalIssuePages: 1, // Temp analyses have only one page
+          });
+
+          return;
+        }
+
+        // Otherwise proceed with API call for persistent analyses
         let url = `/api/analyses/${analysisId}?page=${page}`;
 
         if (categories.length > 0) {

@@ -134,20 +134,43 @@ export const POST: APIRoute = async ({ request, locals }) => {
       apiKey: OPENROUTER_API_KEY, // Use the imported variable directly
     });
 
-    // Create analysis service and process request
+    // Create analysis service
     const analysisService = new AnalysisService(locals.supabase, openRouterService);
 
-    // Determine user ID: use authenticated user if available, otherwise fallback to default
-    const userId = locals.user ? locals.user.id : DEFAULT_USER_ID;
+    // Check if user is authenticated
+    const isAuthenticated = !!locals.user;
 
-    const result = await analysisService.createAnalysis(userId, {
-      text_content: validationResult.data.text_content,
-    });
+    // Handle differently based on authentication status
+    if (isAuthenticated) {
+      // User is logged in - save to database as before
+      const userId = locals.user?.id || "";
+      const result = await analysisService.createAnalysis(userId, {
+        text_content: validationResult.data.text_content,
+      });
+      return new Response(JSON.stringify(result), {
+        status: 201,
+        headers: { "Content-Type": "application/json" },
+      });
+    } else {
+      // User is not logged in - process analysis without saving to database
+      const result = await analysisService.createTemporaryAnalysis({
+        text_content: validationResult.data.text_content,
+      });
 
-    return new Response(JSON.stringify(result), {
-      status: 201,
-      headers: { "Content-Type": "application/json" },
-    });
+      // For temporary analyses, include the full text_content in the response
+      // so the client can store it in localStorage
+      return new Response(
+        JSON.stringify({
+          ...result,
+          text_content: validationResult.data.text_content,
+          is_temporary: true,
+        }),
+        {
+          status: 201,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
   } catch (error) {
     console.error("Error processing analysis request:", error);
 

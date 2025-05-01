@@ -5,7 +5,8 @@ import { SpinnerOverlay } from "./SpinnerOverlay";
 import { Alert, AlertDescription } from "./ui/alert";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { useAuth } from "./hooks/useAuth";
-import type { CreateAnalysisCommand, CreateAnalysisResponseDTO } from "../types";
+import type { CreateAnalysisCommand } from "../types";
+import { temporaryAnalysisService } from "../lib/services/temporary-analysis.service";
 
 interface NewAnalysisFormState {
   text: string;
@@ -107,9 +108,15 @@ export function NewAnalysisForm() {
         throw new Error(errorMessage);
       }
 
-      const data: CreateAnalysisResponseDTO = await response.json();
+      const data = await response.json();
 
-      // Przekierowanie do widoku szczegółów analizy
+      // Check if this is a temporary analysis (for non-logged users)
+      if (!isAuthenticated && data.is_temporary && data.text_content) {
+        // Store the temporary analysis in localStorage
+        temporaryAnalysisService.storeAnalysis(data, data.text_content);
+      }
+
+      // Redirect to analysis details view
       window.location.href = `/analyses/${data.id}`;
     } catch (error) {
       setState((prev) => ({

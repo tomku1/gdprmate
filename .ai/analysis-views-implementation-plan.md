@@ -2,16 +2,16 @@
 
 ## 1. Przegląd
 Plan opisuje implementację dwóch powiązanych widoków w aplikacji GdprMate:
-1.  **Widok Nowej Analizy** (`/dashboard`): Umożliwia zalogowanym użytkownikom wprowadzenie tekstu (np. klauzuli informacyjnej) i zainicjowanie analizy zgodności z GDPR.
-2.  **Widok Szczegółów Analizy** (`/analyses/:id`): Wyświetla wyniki przeprowadzonej analizy, w tym listę zidentyfikowanych problemów (błędów/braków), ich kategorie oraz sugerowane poprawki. Umożliwia filtrowanie problemów.
+1.  **Widok Nowej Analizy** (`/dashboard`): Umożliwia użytkownikom wprowadzenie tekstu (np. klauzuli informacyjnej) i zainicjowanie analizy zgodności z GDPR. Dostępny również dla niezalogowanych użytkowników, ale z ograniczeniami.
+2.  **Widok Szczegółów Analizy** (`/analyses/:id`): Wyświetla wyniki przeprowadzonej analizy, w tym listę zidentyfikowanych problemów (błędów/braków), ich kategorie oraz sugerowane poprawki. Umożliwia filtrowanie problemów. Dla niezalogowanych użytkowników pokazuje ograniczoną liczbę problemów.
 
 Implementacja będzie zgodna z dostarczonymi wymaganiami (PRD), historyjkami użytkowników, opisem API i stackiem technologicznym (Astro, React, TypeScript, Tailwind, Shadcn/ui).
 
 **Uwaga:** Interakcje użytkownika z sugestiami (np. kopiowanie, odrzucanie) nie są częścią tego planu implementacji i zostaną opisane w osobnym dokumencie.
 
 ## 2. Routing widoku
-- **Nowa Analiza**: Dostępny pod ścieżką `/dashboard` (domyślna zakładka). Dostęp chroniony, wymaga zalogowania.
-- **Szczegóły Analizy**: Dostępny pod dynamiczną ścieżką `/analyses/:id`, gdzie `:id` to UUID analizy. Dostęp chroniony, wymaga zalogowania i autoryzacji (użytkownik musi być właścicielem analizy).
+- **Nowa Analiza**: Dostępny pod ścieżką `/dashboard`. Dostęp publiczny, ale z ograniczeniami dla niezalogowanych użytkowników.
+- **Szczegóły Analizy**: Dostępny pod dynamiczną ścieżką `/analyses/:id`, gdzie `:id` to UUID analizy. Dostęp publiczny, ale niezalogowani użytkownicy widzą tylko ograniczoną liczbę problemów (2 pierwsze).
 
 ## 3. Struktura komponentów
 
@@ -30,16 +30,19 @@ Implementacja będzie zgodna z dostarczonymi wymaganiami (PRD), historyjkami uż
     - IssuesList                       # Lista problemów z obsługą paginacji/infinite scroll
       - IssueCard                      # Karta pojedynczego problemu
         - CategoryBadge                # Badge wizualnie oznaczający kategorię problemu
+
+- src/lib/services/
+  - temporary-analysis.service.ts      # Serwis do zarządzania tymczasowymi analizami w sessionStorage
 ```
 
 ## 4. Szczegóły komponentów
 
 ### `NewAnalysisForm`
-- **Opis:** Kontener formularza do tworzenia nowej analizy. Zarządza stanem wprowadzania tekstu, walidacją, stanem ładowania i komunikacją z API (`POST /api/analyses`). Po pomyślnym utworzeniu analiz przekierowuje na `/analyses/:id`.
+- **Opis:** Kontener formularza do tworzenia nowej analizy. Zarządza stanem wprowadzania tekstu, walidacją, stanem ładowania i komunikacją z API (`POST /api/analyses`). Po pomyślnym utworzeniu analiz przekierowuje na `/analyses/:id`. Dla niezalogowanych użytkowników zapisuje analizę w sessionStorage.
 - **Główne elementy:** TextAreaWithCounter, AnalyseButton, SpinnerOverlay, komunikaty błędów walidacji i API.
 - **Interakcje:** Wprowadzanie tekstu, kliknięcie przycisku analizy.
-- **Walidacja:** Tekst nie może być pusty i nie może przekraczać 50 000 znaków. Wyświetla błędy API (400, 413).
-- **Typy:** DTO: CreateAnalysisCommand, CreateAnalysisResponseDTO. ViewModel: NewAnalysisFormState { text: string; isLoading: boolean; error: string | null; validationError: string | null }.
+- **Walidacja:** Tekst nie może być pusty i nie może przekraczać limitu znaków (50 000 dla zalogowanych, 1 000 dla niezalogowanych). Wyświetla błędy API (400, 413).
+- **Typy:** DTO: CreateAnalysisCommand. ViewModel: NewAnalysisFormState { text: string; isLoading: boolean; error: string | null; validationError: string | null }.
 - **Propsy:** Brak.
 
 ### `TextAreaWithCounter`
@@ -66,9 +69,9 @@ Implementacja będzie zgodna z dostarczonymi wymaganiami (PRD), historyjkami uż
 - **Propsy:** isLoading.
 
 ### `AnalysisDetailsView`
-- **Opis:** Kontener widoku szczegółów; pobiera dane (`GET /api/analyses/:id`), zarządza ładowaniem, błędami, filtrowaniem i paginacją.
-- **Główne elementy:** DocumentViewer, FilterControls, IssuesList.
-- **Interakcje:** Zmiana filtrów, ładowanie kolejnych stron problemów.
+- **Opis:** Kontener widoku szczegółów; pobiera dane (najpierw sprawdzając sessionStorage, potem `GET /api/analyses/:id`), zarządza ładowaniem, błędami, filtrowaniem i paginacją. Dla niezalogowanych pokazuje tylko 2 pierwsze problemy.
+- **Główne elementy:** DocumentViewer, FilterControls, IssuesList, AuthNoticeAlert (dla niezalogowanych).
+- **Interakcje:** Zmiana filtrów, ładowanie kolejnych stron problemów (tylko dla zalogowanych).
 - **Walidacja:** Obsługa kodów API (200, 401, 403, 404, 500).
 - **Typy:** DTO: AnalysisDetailsDTO, IssueDTO, PaginationDTO. ViewModel: AnalysisDetailsState { analysis: AnalysisDetailsDTO | null; isLoading: boolean; error: string | null; selectedFilters: IssueCategory[]; issues: IssueDTO[]; currentIssuePage: number; totalIssuePages: number; isLoadingIssues: boolean }.
 - **Propsy:** analysisId: string.
@@ -79,6 +82,13 @@ Implementacja będzie zgodna z dostarczonymi wymaganiami (PRD), historyjkami uż
 - **Interakcje:** —
 - **Typy:** DTO: AnalysisDetailsDTO.
 - **Propsy:** analysisData: AnalysisDetailsDTO.
+
+### `AuthNoticeAlert`
+- **Opis:** Komponent informacyjny dla niezalogowanych użytkowników wyświetlany na widoku szczegółów analizy.
+- **Główne elementy:** Alert, tekst informacyjny, przycisk zachęcający do zalogowania.
+- **Interakcje:** Przekierowanie do logowania po kliknięciu przycisku.
+- **Typy:** Brak propsów.
+- **Propsy:** Brak.
 
 ### `LanguageBadge`
 - **Opis:** Component pokazujący wykryty język dokumentu.
@@ -95,7 +105,7 @@ Implementacja będzie zgodna z dostarczonymi wymaganiami (PRD), historyjkami uż
 - **Propsy:** availableCategories, selectedCategories, onFilterChange.
 
 ### `IssuesList`
-- **Opis:** Renderuje listę IssueCard z paginacją lub infinite scroll; pozwala ładować kolejne problemy.
+- **Opis:** Renderuje listę IssueCard z paginacją lub infinite scroll; pozwala ładować kolejne problemy (tylko dla zalogowanych).
 - **Główne elementy:** div listy, IssueCard, przycisk Załaduj więcej lub infinite scroll, wskaźnik ładowania.
 - **Interakcje:** onLoadMore.
 - **Typy:** DTO: IssueDTO, PaginationDTO. Props: { issues: IssueDTO[]; pagination: PaginationDTO; isLoadingMore: boolean; onLoadMore: () => void }.
@@ -115,6 +125,14 @@ Implementacja będzie zgodna z dostarczonymi wymaganiami (PRD), historyjkami uż
 - **Typy:** Props: { category: IssueCategory }.
 - **Propsy:** category.
 
+### `temporaryAnalysisService`
+- **Opis:** Serwis do zarządzania tymczasowymi analizami w sessionStorage dla niezalogowanych użytkowników.
+- **Główne metody:**
+  - `storeAnalysis(analysis, textContent)`: Zapisuje analizę do sessionStorage.
+  - `getAnalysis(id)`: Pobiera analizę z sessionStorage.
+  - `isTemporaryAnalysis(id)`: Sprawdza czy analiza jest tymczasowa.
+  - `getAllAnalyses()`: Pobiera wszystkie tymczasowe analizy.
+
 ## 5. Typy
 Implementacja będzie korzystać bezpośrednio z typów DTO zdefiniowanych w `src/types.ts`:
 - `CreateAnalysisCommand`: Do wysłania żądania POST.
@@ -130,37 +148,39 @@ Dodatkowo, komponenty będą zarządzać swoim stanem wewnętrznym za pomocą pr
 
 ## 6. Zarządzanie stanem
 - **`NewAnalysisForm`**: Stan będzie zarządzany lokalnie w komponencie za pomocą hooka `useState` dla `text`, `isLoading`, `error`, `validationError`. Ze względu na prostotę, dedykowany custom hook nie jest konieczny.
-- **`AnalysisDetailsView`**: Ze względu na większą złożoność (pobieranie danych analizy, zarządzanie listą problemów, filtrowanie, paginacja, stany ładowania i błędów), zalecane jest stworzenie customowego hooka, np. `useAnalysisDetails(analysisId: string)`. Hook ten enkapsulowałby logikę pobierania danych z API (`GET /api/analyses/:id` z różnymi parametrami query), zarządzanie stanem (`AnalysisDetailsState`) i udostępniałby dane oraz funkcje do interakcji (np. `loadMoreIssues`, `setFilters`) komponentowi `AnalysisDetailsView`.
+- **`AnalysisDetailsView`**: Ze względu na większą złożoność (pobieranie danych analizy, zarządzanie listą problemów, filtrowanie, paginacja, stany ładowania i błędów), zalecane jest stworzenie customowego hooka, np. `useAnalysisDetails(analysisId: string)`. Hook ten enkapsulowałby logikę sprawdzania sessionStorage, pobierania danych z API (`GET /api/analyses/:id` z różnymi parametrami query), zarządzanie stanem (`AnalysisDetailsState`) i udostępniałby dane oraz funkcje do interakcji (np. `loadMoreIssues`, `setFilters`) komponentowi `AnalysisDetailsView`.
 
 ## 7. Integracja API
 - **Tworzenie analizy:** Komponent `NewAnalysisForm` wywoła `fetch` (lub inną bibliotekę HTTP) z metodą `POST` na endpoint `/api/analyses`.
-    - **Żądanie:** `Content-Type: application/json`, Body: `CreateAnalysisCommand` (`{ "text_content": string }`). Wymagana autoryzacja (Bearer token w nagłówku, obsłużone przez middleware Astro lub globalny wrapper fetch).
-    - **Odpowiedź (Sukces 201):** `CreateAnalysisResponseDTO`. Zwraca podsumowanie nowo utworzonej analizy (ID, podgląd tekstu, status, język, data). **Uwaga:** Pełne szczegóły analizy, w tym lista znalezionych problemów (`issues`), nie są zwracane w tej odpowiedzi i wymagają osobnego zapytania `GET /api/analyses/:id` po przekierowaniu. Frontend użyje `id` z odpowiedzi do przekierowania na `/analyses/:id`.
+    - **Żądanie:** `Content-Type: application/json`, Body: `CreateAnalysisCommand` (`{ "text_content": string }`). Autoryzacja opcjonalna.
+    - **Odpowiedź (Sukces 201):** 
+      - Dla zalogowanych: Standardowa odpowiedź `CreateAnalysisResponseDTO`. 
+      - Dla niezalogowanych: Rozszerzona odpowiedź z polami `text_content` i `is_temporary: true`. Tymczasowa analiza jest zapisywana w sessionStorage przy użyciu `temporaryAnalysisService`.
     - **Odpowiedź (Błąd):** Obsługa statusów 400, 413 (błędy walidacji), 401 (przekierowanie do logowania), 500 (ogólny błąd serwera).
-- **Pobieranie szczegółów analizy:** Custom hook `useAnalysisDetails` (lub bezpośrednio `AnalysisDetailsView`) wywoła `fetch` z metodą `GET` na endpoint `/api/analyses/:id` (po przekierowaniu z formularza lub bezpośrednim wejściu na stronę).
-    - **Żądanie:** Wymagana autoryzacja. Opcjonalne parametry query: `page`, `limit`, `category` (do paginacji i filtrowania problemów `issues`).
-    - **Odpowiedź (Sukces 200):** `AnalysisDetailsDTO`. Zawiera pełne dane analizy, w tym cały tekst (`text_content`) oraz pierwszą stronę listy problemów (`issues`) wraz z informacjami o paginacji (`issues_pagination`). Dane zostaną zapisane w stanie komponentu/hooka.
+- **Pobieranie szczegółów analizy:** Custom hook `useAnalysisDetails` najpierw sprawdza sessionStorage używając `temporaryAnalysisService`, a jeśli nie znajdzie analizy, wykonuje `GET` na endpoint `/api/analyses/:id`.
+    - **Żądanie:** Autoryzacja opcjonalna. Opcjonalne parametry query: `page`, `limit`, `category` (do paginacji i filtrowania problemów `issues`).
+    - **Odpowiedź (Sukces 200):** `AnalysisDetailsDTO`. Zawiera pełne dane analizy, w tym cały tekst (`text_content`) oraz pierwszą stronę listy problemów (`issues`) wraz z informacjami o paginacji (`issues_pagination`). Dane zostaną zapisane w stanie komponentu/hooka. Dla niezalogowanych użytkowników lista problemów jest ograniczona do 2 pierwszych.
     - **Odpowiedź (Błąd):** Obsługa statusów 401 (przekierowanie), 403 (brak dostępu), 404 (nie znaleziono), 500 (błąd serwera).
 
 ## 8. Interakcje użytkownika
 - **Wpisywanie tekstu:** Aktualizacja stanu `text` w `NewAnalysisForm`, aktualizacja licznika znaków, dynamiczna walidacja i zmiana stanu `AnalyseButton`.
-- **Kliknięcie "Analizuj":** Wywołanie `POST /api/analyses`, pokazanie `SpinnerOverlay`, obsługa odpowiedzi (przekierowanie lub błąd).
-- **Zmiana filtrów:** Aktualizacja stanu `selectedFilters` w `AnalysisDetailsView`, wywołanie `GET /api/analyses/:id` z parametrem `category`, aktualizacja `IssuesList`.
-- **Ładowanie kolejnych problemów:** (Infinite scroll lub przycisk) Wywołanie `GET /api/analyses/:id` z parametrem `page`, dołączenie nowych problemów do `IssuesList`, aktualizacja stanu paginacji.
+- **Kliknięcie "Analizuj":** Wywołanie `POST /api/analyses`, pokazanie `SpinnerOverlay`, obsługa odpowiedzi (przekierowanie lub błąd). Dla niezalogowanych użytkowników zapisanie analizy w sessionStorage.
+- **Zmiana filtrów:** Aktualizacja stanu `selectedFilters` w `AnalysisDetailsView`, filtrowanie problemów (bezpośrednio w przypadku tymczasowych analiz z sessionStorage lub wywołanie API dla trwałych analiz).
+- **Ładowanie kolejnych problemów:** (Infinite scroll lub przycisk) Tylko dla zalogowanych użytkowników. Wywołanie `GET /api/analyses/:id` z parametrem `page`, dołączenie nowych problemów do `IssuesList`, aktualizacja stanu paginacji.
 
 ## 9. Warunki i walidacja
 - **Formularz Nowej Analizy (`NewAnalysisForm`):**
-    - Warunek: `text.length > 0` ORAZ `text.length <= 50000`.
+    - Warunek: `text.length > 0` ORAZ `text.length <= 50000` (dla zalogowanych) lub `text.length <= 1000` (dla niezalogowanych).
     - Weryfikacja: W komponencie, przed wysłaniem żądania.
     - Wpływ na UI: Stan `disabled` komponentu `AnalyseButton`, ewentualne komunikaty walidacyjne przy `TextAreaWithCounter`. Walidacja jest też po stronie API (400, 413).
 - **Dostęp do Szczegółów Analizy (`AnalysisDetailsView`):**
-    - Warunek: Użytkownik zalogowany ORAZ użytkownik jest właścicielem analizy o danym `:id`.
-    - Weryfikacja: Po stronie API (zwraca 401 lub 403).
-    - Wpływ na UI: Przekierowanie na `/login` (dla 401) lub wyświetlenie komunikatu o braku dostępu (dla 403).
+    - Warunek: Dla analiz z bazy danych - użytkownik musi być właścicielem analizy o danym `:id`. Dla tymczasowych analiz - analiza musi istnieć w sessionStorage.
+    - Weryfikacja: Po stronie API dla analiz z bazy danych (zwraca 401 lub 403) lub przez `temporaryAnalysisService` dla tymczasowych analiz.
+    - Wpływ na UI: Przekierowanie na `/login` (dla 401) lub wyświetlenie komunikatu o braku dostępu (dla 403) lub nie znaleziono analizy (dla nieistniejących analiz).
 - **Paginacja Problemów (`IssuesList`):**
-    - Warunek: `currentPage < totalPages`.
+    - Warunek: Użytkownik zalogowany ORAZ `currentPage < totalPages`.
     - Weryfikacja: W komponencie `IssuesList` lub hooku `useAnalysisDetails` na podstawie `pagination` z API.
-    - Wpływ na UI: Widoczność/aktywność przycisku "Załaduj więcej" lub działanie infinite scroll.
+    - Wpływ na UI: Widoczność/aktywność przycisku "Załaduj więcej" lub działanie infinite scroll. Dla niezalogowanych użytkowników brak paginacji (maksymalnie 2 problemy).
 
 ## 10. Obsługa błędów
 - **Błędy walidacji (Frontend):** Komunikaty wyświetlane bezpośrednio przy polu `TextAreaWithCounter` w `NewAnalysisForm`.
@@ -175,13 +195,14 @@ Dodatkowo, komponenty będą zarządzać swoim stanem wewnętrznym za pomocą pr
 - **Puste stany:** Wyświetlanie odpowiednich komunikatów, gdy lista problemów jest pusta (np. "Brak problemów do wyświetlenia dla wybranych filtrów" w `IssuesList`).
 
 ## 11. Kroki implementacji
-1.  **Utworzenie stron Astro:** Stworzyć pliki `src/pages/dashboard.astro` i `src/pages/analyses/[id].astro`. Zaimplementować podstawową logikę pobierania `id` w `[id].astro` i przekazania go do komponentu React. Zabezpieczyć trasy przed niezalogowanymi użytkownikami (np. za pomocą middleware Astro lub logiki w `Astro.locals`).
-2.  **Implementacja `NewAnalysisForm`:** Stworzyć komponent React, zintegrować `TextAreaWithCounter` (bazujący na Shadcn `Textarea`) i `AnalyseButton` (Shadcn `Button`). Zaimplementować logikę stanu (`useState`), walidacji i komunikacji z `POST /api/analyses`. Dodać `SpinnerOverlay`. Obsłużyć przekierowanie po sukcesie.
-3.  **Implementacja `AnalysisDetailsView`:** Stworzyć komponent React. Rozważyć implementację custom hooka `useAnalysisDetails` do zarządzania stanem i logiką pobierania danych (`GET /api/analyses/:id`). Obsłużyć stany ładowania i błędy (401, 403, 404, 500).
-4.  **Implementacja `DocumentViewer`:** Stworzyć komponent wyświetlający `text_content` i `LanguageBadge` (Shadcn `Badge`).
-5.  **Implementacja `FilterControls`:** Stworzyć komponent z kontrolkami (np. Shadcn `Checkbox`) do filtrowania po `IssueCategory`. Połączyć ze stanem/hookiem w `AnalysisDetailsView`.
-6.  **Implementacja `IssuesList`:** Stworzyć komponent renderujący listę `IssueCard`. Zaimplementować logikę paginacji/infinite scroll (np. przy użyciu `react-intersection-observer`) i przycisk/wskaźnik ładowania kolejnych problemów. Obsłużyć pusty stan.
-7.  **Implementacja `IssueCard`:** Stworzyć komponent (np. na bazie Shadcn `Card` lub `Accordion`) wyświetlający kategorię (`CategoryBadge`), opis i sugestię.
-8.  **Implementacja komponentów pomocniczych:** Stworzyć `CategoryBadge` (Shadcn `Badge` ze stylami warunkowymi).
-9.  **Styling i RWD:** Zastosować Tailwind CSS do stylizacji komponentów zgodnie z designem. Upewnić się, że widoki są responsywne, ze szczególnym uwzględnieniem układu `AnalysisDetailsView` (dwie kolumny na desktopie, stack na mobile).
-10. **Testowanie:** Przetestować przepływ tworzenia analizy, wyświetlania szczegółów, filtrowania, paginacji oraz obsługę błędów i przypadków brzegowych (puste dane, bardzo długi tekst itp.) na różnych urządzeniach/rozmiarach ekranu. 
+1.  **Utworzenie stron Astro:** Stworzyć pliki `src/pages/dashboard.astro` i `src/pages/analyses/[id].astro`. Zaimplementować podstawową logikę pobierania `id` w `[id].astro` i przekazania go do komponentu React. Zmodyfikować middleware do obsługi publicznego dostępu.
+2.  **Implementacja serwisu tymczasowych analiz:** Stworzyć `src/lib/services/temporary-analysis.service.ts` do zarządzania analizami w sessionStorage.
+3.  **Implementacja `NewAnalysisForm`:** Stworzyć komponent React, zintegrować `TextAreaWithCounter` (bazujący na Shadcn `Textarea`) i `AnalyseButton` (Shadcn `Button`). Zaimplementować logikę stanu (`useState`), walidacji, komunikacji z `POST /api/analyses` i zapisywania tymczasowych analiz w sessionStorage dla niezalogowanych. Dodać `SpinnerOverlay`. Obsłużyć przekierowanie po sukcesie.
+4.  **Implementacja `AnalysisDetailsView`:** Stworzyć komponent React. Zaimplementować custom hook `useAnalysisDetails` do zarządzania stanem, sprawdzania sessionStorage i pobierania danych API. Obsłużyć stany ładowania i błędy. Dodać `AuthNoticeAlert` dla niezalogowanych użytkowników.
+5.  **Implementacja `DocumentViewer`:** Stworzyć komponent wyświetlający `text_content` i `LanguageBadge` (Shadcn `Badge`).
+6.  **Implementacja `FilterControls`:** Stworzyć komponent z kontrolkami (np. Shadcn `Checkbox`) do filtrowania po `IssueCategory`. Połączyć ze stanem/hookiem w `AnalysisDetailsView`.
+7.  **Implementacja `IssuesList`:** Stworzyć komponent renderujący listę `IssueCard`. Zaimplementować logikę paginacji/infinite scroll (np. przy użyciu `react-intersection-observer`) i przycisk/wskaźnik ładowania kolejnych problemów. Obsłużyć pusty stan. Ograniczyć liczbę problemów dla niezalogowanych.
+8.  **Implementacja `IssueCard`:** Stworzyć komponent (np. na bazie Shadcn `Card` lub `Accordion`) wyświetlający kategorię (`CategoryBadge`), opis i sugestię.
+9.  **Implementacja komponentów pomocniczych:** Stworzyć `CategoryBadge` (Shadcn `Badge` ze stylami warunkowymi) i `AuthNoticeAlert`.
+10. **Styling i RWD:** Zastosować Tailwind CSS do stylizacji komponentów zgodnie z designem. Upewnić się, że widoki są responsywne, ze szczególnym uwzględnieniem układu `AnalysisDetailsView` (dwie kolumny na desktopie, stack na mobile).
+11. **Testowanie:** Przetestować przepływ tworzenia analizy, wyświetlania szczegółów, filtrowania, paginacji oraz obsługę błędów i przypadków brzegowych (puste dane, bardzo długi tekst itp.) na różnych urządzeniach/rozmiarach ekranu, zarówno dla zalogowanych jak i niezalogowanych użytkowników. 
