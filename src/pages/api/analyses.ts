@@ -4,7 +4,6 @@ import { OPENROUTER_API_KEY } from "astro:env/server";
 import { createAnalysisSchema } from "../../lib/schemas/analysis.schema";
 import { AnalysisService } from "../../lib/services/analysis.service";
 import { OpenRouterService } from "../../lib/services/openrouter.service";
-import { DEFAULT_USER_ID } from "../../db/supabase.client";
 import type { AnalysisListResponseDTO, AnalysisSummaryDTO, PaginationDTO } from "../../types";
 
 export const prerender = false;
@@ -16,7 +15,20 @@ export const GET: APIRoute = async ({ request, locals }) => {
     const page = parseInt(url.searchParams.get("page") || "1");
     const limit = parseInt(url.searchParams.get("limit") || "10");
 
-    // Get analyses from database
+    // Check if user is authenticated
+    const isAuthenticated = !!locals.user;
+
+    if (!isAuthenticated) {
+      return new Response(
+        JSON.stringify({
+          error: "Unauthorized",
+          message: "You must be logged in to view analyses",
+        }),
+        { status: 401, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    // Get analyses from database for the authenticated user
     const {
       data: analysesData,
       error,
@@ -24,7 +36,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
     } = await locals.supabase
       .from("analyses")
       .select("id, document_id, status, created_at", { count: "exact" })
-      .eq("user_id", DEFAULT_USER_ID)
+      .eq("user_id", locals.user?.id || "")
       .order("created_at", { ascending: false })
       .range((page - 1) * limit, page * limit - 1);
 

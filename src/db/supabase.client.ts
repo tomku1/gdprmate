@@ -16,8 +16,6 @@ export type SupabaseClient = ReturnType<typeof createSupabaseServerInstance>;
 // Admin client instance removed
 // export type SupabaseAdminClient = ReturnType<typeof createSupabaseAdminInstance>;
 
-export const DEFAULT_USER_ID = "09794bf4-14b3-44ec-aeff-56e788450433";
-
 export const cookieOptions: CookieOptionsWithName = {
   name: "sb-auth-token",
   path: "/",
