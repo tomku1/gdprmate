@@ -42,8 +42,8 @@ export const GET: APIRoute = async ({ request, locals }) => {
     const totalRecords = count || 0;
     const totalPages = Math.ceil(totalRecords / limit);
 
-    // For each analysis, get document details to create preview
     const analysesWithPreviews: AnalysisSummaryDTO[] = [];
+    // For each analysis, get document details to create preview
 
     for (const analysis of analysesData || []) {
       // Get document for this analysis
