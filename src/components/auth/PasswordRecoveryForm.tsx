@@ -149,7 +149,12 @@ export function PasswordRecoveryForm() {
         </CardContent>
       </Card>
 
-      <SpinnerOverlay isLoading={state.isLoading} />
+      <SpinnerOverlay 
+        isLoading={state.isLoading} 
+        title="Resetowanie hasła..." 
+        subtitle="Trwa wysyłanie instrukcji resetowania hasła."
+        showAlert={false}
+      />
     </div>
   );
 }

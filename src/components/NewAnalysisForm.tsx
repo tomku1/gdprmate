@@ -168,7 +168,14 @@ export function NewAnalysisForm() {
         </CardContent>
       </Card>
 
-      <SpinnerOverlay isLoading={state.isLoading} />
+      <SpinnerOverlay
+        isLoading={state.isLoading}
+        title="Analizowanie tekstu..."
+        subtitle="To może potrwać kilka chwil."
+        showAlert={true}
+        alertTitle="Trwa analiza"
+        alertDescription="Twój tekst jest obecnie analizowany pod kątem zgodności z GDPR. Wyniki zostaną wyświetlone po zakończeniu analizy."
+      />
     </div>
   );
 }

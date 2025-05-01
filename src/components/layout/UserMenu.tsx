@@ -20,7 +20,7 @@ export function UserMenu({ isMobile = false }: UserMenuProps) {
     try {
       setIsLoggingOut(true);
       await logout();
-      window.location.href = "/";
+      window.location.href = "/dashboard";
     } catch (error) {
       console.error("Logout failed:", error);
     } finally {

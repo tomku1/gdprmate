@@ -204,7 +204,12 @@ export function RegistrationForm() {
         </CardContent>
       </Card>
 
-      <SpinnerOverlay isLoading={state.isLoading} />
+      <SpinnerOverlay 
+        isLoading={state.isLoading} 
+        title="Rejestracja..." 
+        subtitle="Trwa tworzenie nowego konta."
+        showAlert={false}
+      />
     </div>
   );
 }

@@ -232,7 +232,12 @@ export function PasswordResetForm() {
         </CardContent>
       </Card>
 
-      <SpinnerOverlay isLoading={state.isLoading} />
+      <SpinnerOverlay 
+        isLoading={state.isLoading} 
+        title="Zmiana hasła..." 
+        subtitle="Trwa aktualizacja hasła do konta."
+        showAlert={false}
+      />
     </div>
   );
 }

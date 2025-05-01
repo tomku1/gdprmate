@@ -52,6 +52,11 @@ export const onRequest = defineMiddleware(async ({ locals, cookies, url, request
     };
   }
 
+  // Redirect root path to dashboard
+  if (url.pathname === "/") {
+    return redirect("/dashboard");
+  }
+
   // Check if the current path is public
   const isPublicPath =
     PUBLIC_PATHS.includes(url.pathname) ||

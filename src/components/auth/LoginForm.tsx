@@ -177,7 +177,12 @@ export function LoginForm() {
         </CardContent>
       </Card>
 
-      <SpinnerOverlay isLoading={state.isLoading} />
+      <SpinnerOverlay 
+        isLoading={state.isLoading} 
+        title="Logowanie..." 
+        subtitle="Trwa weryfikacja danych logowania."
+        showAlert={false}
+      />
     </div>
   );
 }
