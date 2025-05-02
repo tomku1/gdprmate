@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { Button } from "../ui/button";
 import { useAuth } from "../hooks/useAuth";
 import { UserMenu } from "../layout/UserMenu";
+import { useFeatureFlag } from "../hooks/useFeatureFlag";
 
 export function NavBar() {
   const { isAuthenticated, isLoading } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const enableRegistration = useFeatureFlag("enableRegistration");
 
   useEffect(() => {
     setIsClient(true);
@@ -45,9 +47,11 @@ export function NavBar() {
                     Zaloguj się
                   </Button>
                 </a>
-                <a href="/register">
-                  <Button size="sm">Zarejestruj się</Button>
-                </a>
+                {enableRegistration && (
+                  <a href="/register">
+                    <Button size="sm">Zarejestruj się</Button>
+                  </a>
+                )}
               </div>
             )}
 
@@ -127,11 +131,13 @@ export function NavBar() {
                       Zaloguj się
                     </Button>
                   </a>
-                  <a href="/register" className="w-full">
-                    <Button size="sm" className="w-full">
-                      Zarejestruj się
-                    </Button>
-                  </a>
+                  {enableRegistration && (
+                    <a href="/register" className="w-full">
+                      <Button size="sm" className="w-full">
+                        Zarejestruj się
+                      </Button>
+                    </a>
+                  )}
                 </div>
               )}
 

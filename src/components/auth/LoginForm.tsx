@@ -4,6 +4,7 @@ import { Button } from "../ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { Alert, AlertDescription } from "../ui/alert";
 import { SpinnerOverlay } from "../SpinnerOverlay";
+import { useFeatureFlag } from "../hooks/useFeatureFlag";
 
 interface LoginFormState {
   email: string;
@@ -21,6 +22,7 @@ export function LoginForm() {
     error: null,
     validationErrors: {},
   });
+  const enableRegistration = useFeatureFlag("enableRegistration");
 
   const validateForm = (): boolean => {
     const errors: Record<string, string> = {};
@@ -149,11 +151,13 @@ export function LoginForm() {
               )}
             </div>
 
-            <div className="text-right text-sm">
-              <a href="/recover-password" className="text-primary underline underline-offset-4 hover:text-primary/90">
-                Zapomniałeś hasła?
-              </a>
-            </div>
+            {enableRegistration && (
+              <div className="text-right text-sm">
+                <a href="/recover-password" className="text-primary underline underline-offset-4 hover:text-primary/90">
+                  Zapomniałeś hasła?
+                </a>
+              </div>
+            )}
 
             {state.error && (
               <Alert variant="destructive">
@@ -166,20 +170,22 @@ export function LoginForm() {
                 {state.isLoading ? "Logowanie..." : "Zaloguj się"}
               </Button>
 
-              <div className="text-center text-sm">
-                Nie masz jeszcze konta?{" "}
-                <a href="/register" className="text-primary underline underline-offset-4 hover:text-primary/90">
-                  Zarejestruj się
-                </a>
-              </div>
+              {enableRegistration && (
+                <div className="text-center text-sm">
+                  Nie masz jeszcze konta?{" "}
+                  <a href="/register" className="text-primary underline underline-offset-4 hover:text-primary/90">
+                    Zarejestruj się
+                  </a>
+                </div>
+              )}
             </div>
           </form>
         </CardContent>
       </Card>
 
-      <SpinnerOverlay 
-        isLoading={state.isLoading} 
-        title="Logowanie..." 
+      <SpinnerOverlay
+        isLoading={state.isLoading}
+        title="Logowanie..."
         subtitle="Trwa weryfikacja danych logowania."
         showAlert={false}
       />
