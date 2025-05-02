@@ -34,12 +34,26 @@ export function CategoryBadge({ category }: CategoryBadgeProps) {
     }
   };
 
+  // Get display name in Polish
+  const getCategoryDisplayName = () => {
+    switch (category) {
+      case "critical":
+        return "Krytyczny";
+      case "important":
+        return "Ważny";
+      case "minor":
+        return "Drobny";
+      default:
+        return category;
+    }
+  };
+
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
           <Badge variant={getVariant() as "default" | "destructive" | "outline" | "secondary"} className="capitalize">
-            {category}
+            {getCategoryDisplayName()}
           </Badge>
         </TooltipTrigger>
         <TooltipContent>

@@ -11,7 +11,7 @@ export function LanguageBadge({ language = "unknown" }: LanguageBadgeProps) {
   const getFullLanguageName = () => {
     const languages: Record<string, string> = {
       pl: "Polski",
-      en: "English",
+      en: "Polski",
       de: "Deutsch",
       fr: "Français",
       es: "Español",
@@ -27,12 +27,21 @@ export function LanguageBadge({ language = "unknown" }: LanguageBadgeProps) {
     }
   };
 
+  // Override the displayed language code for the badge
+  const getDisplayedLanguageCode = () => {
+    // If language is "en", show "PL" instead
+    if ((language || "").toLowerCase() === "en") {
+      return "PL";
+    }
+    return language || "?";
+  };
+
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
           <Badge variant="outline" className="text-xs font-normal px-2.5 py-0.5 uppercase">
-            {language || "?"}
+            {getDisplayedLanguageCode()}
           </Badge>
         </TooltipTrigger>
         <TooltipContent>

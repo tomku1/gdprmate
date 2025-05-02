@@ -44,6 +44,25 @@ export function FilterControls({ availableCategories, selectedCategories, onFilt
     return `${baseStyles} ${variantStyles}`;
   };
 
+  // Get display name in Polish
+  const getCategoryDisplayName = (category: IssueCategory) => {
+    switch (category) {
+      case "critical":
+        return "Krytyczny";
+      case "important":
+        return "Ważny";
+      case "minor":
+        return "Drobny";
+      default:
+        return category;
+    }
+  };
+
+  // Get Polish names for active filters display
+  const getPolishCategoryName = (category: IssueCategory) => {
+    return getCategoryDisplayName(category);
+  };
+
   return (
     <div className="space-y-3 mb-6 p-4 border rounded-lg bg-card shadow-sm">
       <h3 className="font-medium">Filtruj problemy według kategorii:</h3>
@@ -60,7 +79,7 @@ export function FilterControls({ availableCategories, selectedCategories, onFilt
                 htmlFor={`filter-${category}`}
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 capitalize cursor-pointer"
               >
-                {category}
+                {getCategoryDisplayName(category)}
               </label>
             </div>
           </div>
@@ -69,7 +88,7 @@ export function FilterControls({ availableCategories, selectedCategories, onFilt
       <div className="text-xs text-muted-foreground pt-1">
         {selectedCategories.length === 0
           ? "Wszystkie kategorie są widoczne"
-          : `Aktywne filtry: ${selectedCategories.map((c) => c).join(", ")}`}
+          : `Aktywne filtry: ${selectedCategories.map((c) => getPolishCategoryName(c)).join(", ")}`}
       </div>
     </div>
   );

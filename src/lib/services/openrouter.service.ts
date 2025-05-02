@@ -73,7 +73,13 @@ export class OpenRouterService {
     if (systemPrompt) {
       messages.push({
         role: "system",
-        content: systemPrompt,
+        content: systemPrompt + "\n\nWażne: Odpowiadaj zawsze w języku polskim, niezależnie od języka zapytania.",
+      });
+    } else {
+      // If no system prompt provided, add a default one to enforce Polish language
+      messages.push({
+        role: "system",
+        content: "Odpowiadaj zawsze w języku polskim, niezależnie od języka zapytania.",
       });
     }
 
