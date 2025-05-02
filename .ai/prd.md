@@ -64,8 +64,9 @@ Obecnie zapewnienie zgodności dokumentów z wymogami Rozporządzenia o Ochronie
    - *Gość (anonimowy):* Dostępne filtrowanie dla wyświetlanych wyników. Brak możliwości sortowania (brak historii).
    - *Użytkownik zalogowany:* Dostępne filtrowanie wyników analizy oraz sortowanie historii analiz.
 
-### WF-010: Obsługa wielu języków (Dokumenty)
-   - System musi być przygotowany do obsługi analizy tekstów w wielu językach (początkowo co najmniej polski i angielski).
+### WF-010: Obsługa języków
+   - System w wersji MVP obsługuje tylko język polski (zarówno w interfejsie jak i analizowanych dokumentach).
+   - ~~System musi być przygotowany do obsługi analizy tekstów w wielu językach (początkowo co najmniej polski i angielski).~~
 
 ### WF-011: Interfejs użytkownika
    - Interfejs aplikacji webowej musi być responsywny (RWD), zapewniając wygodne użytkowanie na różnych rozmiarach ekranów (desktop, tablet, smartfon).
@@ -94,6 +95,7 @@ Obecnie zapewnienie zgodności dokumentów z wymogami Rozporządzenia o Ochronie
 - Zaawansowane funkcje personalizacji wykraczające poza przechowywanie historii (np. notatki, tagi - możliwe w przyszłych iteracjach).
 - Moduł raportowania wykraczający poza podstawowe logowanie zdarzeń.
 - Zaawansowane materiały szkoleniowe i tutoriale interaktywne (poza podstawową pomocą).
+- Obsługa wielu języków - w wersji MVP wspierany jest tylko język polski. Wsparcie dla innych języków (np. angielskiego) planowane jest w przyszłych iteracjach.
 
 ## 5. Model dostępu w MVP
 
@@ -232,15 +234,18 @@ W wersji MVP (Minimum Viable Product) aplikacja będzie oferować dwa podstawowe
     - Lista analiz jest dynamicznie aktualizowana zgodnie z wybranymi opcjami sortowania.
     - *Gość:* Opcje sortowania nie są dostępne (brak historii).
 
-### US-011: Obsługa tekstu w innym języku (np. angielskim)
-- Tytuł: Analiza tekstu w języku angielskim
-- Opis: Jako użytkownik, chcę móc wprowadzić tekst napisany w języku angielskim i uzyskać dla niego poprawną analizę zgodności z GDPR oraz angielskie sugestie poprawek.
+### US-011: ~~Obsługa tekstu w innym języku (np. angielskim)~~ Wersja MVP nie obsługuje dodatkowych języków
+- Tytuł: ~~Analiza tekstu w języku angielskim~~ Język polski jako jedyny obsługiwany język
+- Opis: ~~Jako użytkownik, chcę móc wprowadzić tekst napisany w języku angielskim i uzyskać dla niego poprawną analizę zgodności z GDPR oraz angielskie sugestie poprawek.~~ W wersji MVP system obsługuje wyłącznie dokumenty w języku polskim. Wsparcie dla innych języków zostanie dodane w przyszłych wersjach produktu.
 - Kryteria akceptacji:
-    - Mogę wskazać język analizowanego tekstu (np. wybierając z listy przed analizą) lub system próbuje go automatycznie wykryć.
-    - Jeśli tekst jest w obsługiwanym języku (np. angielskim), analiza jest przeprowadzana z użyciem reguł i słownictwa właściwego dla tego języka.
-    - Wykryte problemy i błędy są opisywane w języku angielskim.
-    - Sugerowane poprawki są generowane w języku angielskim.
-    - Wyniki analizy dla tekstu angielskiego są poprawne i adekwatne.
+    - ~~Mogę wskazać język analizowanego tekstu (np. wybierając z listy przed analizą) lub system próbuje go automatycznie wykryć.~~
+    - ~~Jeśli tekst jest w obsługiwanym języku (np. angielskim), analiza jest przeprowadzana z użyciem reguł i słownictwa właściwego dla tego języka.~~
+    - ~~Wykryte problemy i błędy są opisywane w języku angielskim.~~
+    - ~~Sugerowane poprawki są generowane w języku angielskim.~~
+    - ~~Wyniki analizy dla tekstu angielskiego są poprawne i adekwatne.~~
+    - System informuje użytkownika, że obsługiwany jest tylko język polski.
+    - Interfejs użytkownika jest dostępny wyłącznie w języku polskim.
+    - Analiza dokumentów i generowanie sugestii działa poprawnie dla tekstów w języku polskim.
 
 ### US-012: Responsywny interfejs na urządzeniu mobilnym
 - Tytuł: Używanie aplikacji na smartfonie
