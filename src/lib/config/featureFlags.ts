@@ -10,7 +10,7 @@ export const featureFlags = {
    * When true, enables user registration functionality.
    * Set to false to hide registration UI elements when registration isn't available.
    */
-  enableRegistration: false,
+  enableRegistration: true,
 };
 
 /**

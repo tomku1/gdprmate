@@ -10,7 +10,7 @@ const PUBLIC_PATHS = [
   "/recover-password",
   // Auth API endpoints
   "/api/auth/login",
-  "/api/auth/register",
+  "/api/auth/signup",
   "/api/auth/reset-password",
   "/api/auth/session",
   "/api/auth/logout",
