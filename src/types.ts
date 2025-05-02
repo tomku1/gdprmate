@@ -105,7 +105,22 @@ export interface InteractionDTO {
   created_at: string;
 }
 
+// ------------------------------------------------------------------------------------------------
+// Types specific to Analyses History View
+// ------------------------------------------------------------------------------------------------
+
+/**
+ * View model for an item displayed in the analyses history list.
+ */
+export interface AnalysisHistoryItemViewModel {
+  id: string;
+  textPreview: string;
+  createdAt: string;
+}
+
+// ------------------------------------------------------------------------------------------------
 // OpenRouter service types
+// ------------------------------------------------------------------------------------------------
 export interface OpenRouterMessage {
   role: "system" | "user" | "assistant";
   content: string;
@@ -170,7 +185,8 @@ export interface Issue {
   suggestion: string;
 }
 
-export interface Analysis {
+// Renamed to avoid conflict with the DB type alias
+export interface ManualAnalysisInterface {
   id: string;
   text_content: string;
   created_at: string;

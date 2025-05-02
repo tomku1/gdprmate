@@ -1,8 +1,16 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
 import { NewAnalysisForm } from "../components/NewAnalysisForm";
+import AnalysesHistoryView from "../components/dashboard/history/AnalysesHistoryView";
+
+// Determine if the history tab should be shown
+const currentTab = Astro.url.searchParams.get("tab");
+const showHistory = currentTab === "history";
 ---
 
 <MainLayout title="Dashboard">
-  <NewAnalysisForm client:load />
+  <div class="container max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+    {/* Conditionally render History View or New Analysis Form */}
+    {showHistory ? <AnalysesHistoryView client:load /> : <NewAnalysisForm client:load />}
+  </div>
 </MainLayout>

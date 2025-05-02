@@ -30,6 +30,13 @@ export function NavBar() {
               Strona główna
             </a>
 
+            {/* Link to Dashboard/History for authenticated users */}
+            {showUserMenu && (
+              <a href="/dashboard?tab=history" className="text-sm font-medium hover:text-primary transition-colors">
+                Historia analiz
+              </a>
+            )}
+
             {/* Authentication Buttons - initially hidden on server, shown on client if not authenticated */}
             {showAuthButtons && (
               <div className="flex items-center space-x-2">
@@ -101,6 +108,16 @@ export function NavBar() {
               <a href="/" className="text-sm font-medium hover:text-primary transition-colors py-2">
                 Strona główna
               </a>
+
+              {/* Link to Dashboard/History for authenticated users (Mobile) */}
+              {showUserMenu && (
+                <a
+                  href="/dashboard?tab=history"
+                  className="text-sm font-medium hover:text-primary transition-colors py-2"
+                >
+                  Historia analiz
+                </a>
+              )}
 
               {/* Authentication Buttons - initially hidden on server, shown on client if not authenticated */}
               {showAuthButtons && (
