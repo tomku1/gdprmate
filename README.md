@@ -14,6 +14,12 @@
 7. [License](#license)
 8. [Hosting](#hosting)
 
+## User for testing 
+
+user: 10xdev@test.pl
+pass: Test123 
+
+
 ## Project Description
 
 GdprMate is a web-based assistant for GDPR compliance. It helps users quickly analyze legal documents—such as privacy notices and consent clauses—against key requirements (Articles 7, 13, 14). The app automatically identifies missing or incorrect elements, categorizes issues by severity (critical, major, minor), and offers suggested corrective language. Registered users can store documents, review past analyses, filter and sort results, and work on multiple devices thanks to a responsive interface.
