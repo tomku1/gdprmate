@@ -11,6 +11,12 @@ export const featureFlags = {
    * Set to false to hide registration UI elements when registration isn't available.
    */
   enableRegistration: true,
+
+  /**
+   * When true, enables password recovery functionality (e.g., "Forgot Password?" links).
+   * Set to false to hide these elements when the feature is not available.
+   */
+  enablePasswordRecovery: false,
 };
 
 /**

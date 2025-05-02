@@ -23,6 +23,7 @@ export function LoginForm() {
     validationErrors: {},
   });
   const enableRegistration = useFeatureFlag("enableRegistration");
+  const enablePasswordRecovery = useFeatureFlag("enablePasswordRecovery");
 
   const validateForm = (): boolean => {
     const errors: Record<string, string> = {};
@@ -151,7 +152,7 @@ export function LoginForm() {
               )}
             </div>
 
-            {enableRegistration && (
+            {enablePasswordRecovery && (
               <div className="text-right text-sm">
                 <a href="/recover-password" className="text-primary underline underline-offset-4 hover:text-primary/90">
                   Zapomniałeś hasła?
